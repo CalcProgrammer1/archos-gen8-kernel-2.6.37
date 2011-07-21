@@ -66,7 +66,8 @@
 // TODO: remove
 unsigned int hardware_rev = 5;
 
-static struct mma7660fc_pdata board_mma7660fc_pdata;
+// TODO:
+//static struct mma7660fc_pdata board_mma7660fc_pdata;
 
 extern int __init archos_audio_gpio_init(void);
 
@@ -661,11 +662,13 @@ static struct regulator_consumer_supply board_avcc_supply = {
 	.supply		= "avcc",
 };
 
-extern struct platform_device a43_camera_device;
+// TODO:
+//extern struct platform_device a43_camera_device;
 
 static struct regulator_consumer_supply board_2v8d_cam_supply = {
 	.supply 	= "2v8d_cam",
-	.dev		= &a43_camera_device.dev,
+	// TODO:
+	//.dev		= &a43_camera_device.dev,
 };
 
 /* consumer for vdds_dsi which is permanently enabled */
@@ -1871,43 +1874,20 @@ static struct i2c_board_info __initdata board_i2c_bus2_info[] = {
 };
 
 static struct i2c_board_info __initdata board_i2c_bus3_info[] = {
-	{
-		I2C_BOARD_INFO("mma7660fc", 0x4c),	// to fix
-		.flags = I2C_CLIENT_WAKE,
-		.platform_data = &board_mma7660fc_pdata,
-	},
+	// TODO:
+	//{
+		//I2C_BOARD_INFO("mma7660fc", 0x4c),	// to fix
+		//.flags = I2C_CLIENT_WAKE,
+		//.platform_data = &board_mma7660fc_pdata,
+	//},
 	{
 		I2C_BOARD_INFO("akm8973", 0x1c),
 		.flags = I2C_CLIENT_WAKE,
 	},
 };
 
-// TODO:
-#if 0
 static int __init omap_i2c_init(void)
 {
-	/* Disable OMAP 3630 internal pull-ups for I2Ci */
-	if (cpu_is_omap3630()) {
-
-		u32 prog_io;
-
-		prog_io = omap_ctrl_readl(OMAP343X_CONTROL_PROG_IO1);
-		/* Program (bit 19)=1 to disable internal pull-up on I2C1 */
-		prog_io |= OMAP3630_PRG_I2C1_PULLUPRESX;
-		/* Program (bit 0)=1 to disable internal pull-up on I2C2 */
-		prog_io |= OMAP3630_PRG_I2C2_PULLUPRESX;
-		omap_ctrl_writel(prog_io, OMAP343X_CONTROL_PROG_IO1);
-
-		prog_io = omap_ctrl_readl(OMAP36XX_CONTROL_PROG_IO2);
-		/* Program (bit 7)=1 to disable internal pull-up on I2C3 */
-		prog_io |= OMAP3630_PRG_I2C3_PULLUPRESX;
-		omap_ctrl_writel(prog_io, OMAP36XX_CONTROL_PROG_IO2);
-		prog_io = omap_ctrl_readl(OMAP36XX_CONTROL_PROG_IO_WKUP1);
-		/* Program (bit 5)=1 to disable internal pull-up on I2C4(SR) */
-		prog_io |= OMAP3630_PRG_SR_PULLUPRESX;
-		omap_ctrl_writel(prog_io, OMAP36XX_CONTROL_PROG_IO_WKUP1);
-	}
-
 	omap_register_i2c_bus(1, 400, board_i2c_bus1_info,
 			ARRAY_SIZE(board_i2c_bus1_info));
 	omap_register_i2c_bus(2, 100, board_i2c_bus2_info,
@@ -1917,7 +1897,6 @@ static int __init omap_i2c_init(void)
 
 	return 0;
 }
-#endif
 
 static struct platform_device *board_devices[] __initdata = {
 	&board_vdds_dsi_device,
@@ -2112,8 +2091,7 @@ static void __init board_init(void)
 	if (display_config.nrev > hardware_rev)
 		archos_hdmi_gpio_init(&display_config.rev[hardware_rev]);
 	
-	// TODO:
-	//omap_i2c_init();
+	omap_i2c_init();
 	/* Fix to prevent VIO leakage on wl127x */
 	wl127x_vio_leakage_fix();
 
