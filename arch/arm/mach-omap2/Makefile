@@ -176,6 +176,74 @@ obj-$(CONFIG_MACH_OMAP3517EVM)		+= board-am3517evm.o
 
 obj-$(CONFIG_MACH_SBC3530)		+= board-omap3stalker.o \
 					   hsmmc.o
+
+obj-$(CONFIG_MACH_ARCHOS_A28)		+= board-archos-a28.o \
+					   archos-lcd-qvga28.o
+
+obj-$(CONFIG_MACH_ARCHOS_A32)		+= board-archos-a32.o \
+					   archos-lcd-byd-wqvga32.o
+
+obj-$(CONFIG_MACH_ARCHOS_A32SD)		+= board-archos-a32sd.o \
+					   archos-lcd-byd-wqvga32.o
+
+obj-$(CONFIG_MACH_ARCHOS_A35)		+= board-archos-a35.o \
+					   archos-lcd-a35.o
+
+obj-$(CONFIG_MACH_ARCHOS_A35DM)		+= board-archos-a35dm.o \
+					   archos-lcd-a35.o
+
+obj-$(CONFIG_MACH_ARCHOS_A35DE)	        += board-archos-a35de.o \
+					   archos-lcd-a35.o
+
+obj-$(CONFIG_MACH_ARCHOS_A43)		+= board-archos-a43.o
+#					   archos-lcd-lg-fwvga43.o
+#					   archos-compass.o \
+					   archos-vibrator.o \
+					   archos-nl5550.o \
+					   archos-camera-mt9d113.o 
+
+obj-$(CONFIG_MACH_ARCHOS_A48)		+= board-archos-a48.o \
+					   archos-lcd-samsung-wvga48.o \
+					   archos-lcd-tpo-wvga48.o 
+
+obj-$(CONFIG_MACH_ARCHOS_A70S)		+= board-archos-a70s.o \
+					   archos-lcd-lg-wvga7.o
+
+obj-$(CONFIG_MACH_ARCHOS_A70H)		+= board-archos-a70h.o \
+					   archos-lcd-lg-wvga7.o \
+					   archos-usb-ehci.o \
+					   archos-usb2sata.o 
+
+obj-$(CONFIG_MACH_ARCHOS_A70S2)		+= board-archos-a70s2.o \
+					   archos-touchscreen-goodix.o \
+					   archos-lcd-claa-wsvga7.o
+
+obj-$(CONFIG_MACH_ARCHOS_A70H2)		+= board-archos-a70h2.o \
+					   archos-lcd-claa-wsvga7.o \
+					   archos-usb-ehci.o \
+					   archos-usb2sata.o 
+
+obj-$(CONFIG_MACH_ARCHOS_A101IT)	+= board-archos-a10it.o \
+					   archos-lcd-boe-wsvga10.o \
+					   archos-usb-touchscreen.o \
+					   archos-usb-ohci.o
+
+obj-$(CONFIG_MACH_ARCHOS)		+= archos-fixup.o
+#					   archos-keys.o
+#					   archos-accel.o \
+					   archos-audio.o \
+					   archos-battery.o \
+					   archos-camera-ov7675.o \
+					   archos-die_id.o \
+					   archos-keys.o \
+					   archos-leds.o \
+					   archos-touchscreen.o \
+					   archos-wifi.o \
+					   mmc-twl4030.o \
+					   archos-usb-android.o
+
+obj-$(CONFIG_CLOCKS_INIT) 		+= archos-clock.o
+
 # Platform specific device init code
 usbfs-$(CONFIG_ARCH_OMAP_OTG)		:= usb-fs.o
 obj-y					+= $(usbfs-m) $(usbfs-y)

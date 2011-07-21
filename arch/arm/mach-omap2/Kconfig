@@ -283,6 +283,110 @@ config MACH_OMAP4_PANDA
 	default y
 	depends on ARCH_OMAP4
 
+config MACH_ARCHOS_A28
+	bool "Archos A28 board"
+	depends on ARCH_OMAP3
+	select MACH_ARCHOS
+
+config MACH_ARCHOS_A32
+	bool "Archos A32 board"
+	depends on ARCH_OMAP3
+	select MACH_ARCHOS
+
+config MACH_ARCHOS_A32SD
+	bool "Archos A32SD board"
+	depends on ARCH_OMAP3
+	select MACH_ARCHOS
+
+config MACH_ARCHOS_A35
+	bool "Archos A35 board"
+	depends on ARCH_OMAP3
+	select MACH_ARCHOS
+
+config MACH_ARCHOS_A35DM
+	bool "Archos A35DM board"
+	depends on ARCH_OMAP3
+	select MACH_ARCHOS
+
+config MACH_ARCHOS_A35DE
+	bool "Archos A35DE board"
+	depends on ARCH_OMAP3
+	select MACH_ARCHOS
+
+config MACH_ARCHOS_A43
+	bool "Archos A43 board"
+	depends on ARCH_OMAP3
+	select MACH_ARCHOS
+
+config MACH_ARCHOS_A70S
+	bool "Archos A70S board"
+	depends on ARCH_OMAP3
+	select MACH_ARCHOS
+
+config MACH_ARCHOS_A70H
+	bool "Archos A70H board"
+	depends on ARCH_OMAP3
+	select MACH_ARCHOS
+
+config MACH_ARCHOS_A101IT
+	bool "Archos A101IT board"
+	depends on ARCH_OMAP3
+	select MACH_ARCHOS
+
+config MACH_ARCHOS_A48
+	bool "Archos A48 board"
+	depends on ARCH_OMAP3
+	select MACH_ARCHOS
+
+config MACH_ARCHOS_A70S2
+	bool "Archos A70S2 board"
+	depends on ARCH_OMAP3
+	select MACH_ARCHOS
+
+config MACH_ARCHOS_A70H2
+	bool "Archos A70H2 board"
+	depends on ARCH_OMAP3
+	select MACH_ARCHOS
+
+config MACH_ARCHOS
+	bool 
+	default n
+
+config CMDLINE0
+	string "Initial kernel command string for Archos boards"
+	depends on MACH_ARCHOS
+	default ""
+
+config CMDLINE1
+	string "Initial kernel command string for Archos boards"
+	depends on MACH_ARCHOS
+	default ""
+	
+config CMDLINE2
+	string "Initial kernel command string for Archos boards"
+	depends on MACH_ARCHOS
+	default ""
+
+config CMDLINE3
+	string "Initial kernel command string for Archos boards"
+	depends on MACH_ARCHOS
+	default ""
+
+config CMDLINE4
+	string "Initial kernel command string for Archos boards"
+	depends on MACH_ARCHOS
+	default ""
+
+config CMDLINE5
+	string "Initial kernel command string for Archos boards"
+	depends on MACH_ARCHOS
+	default ""
+
+config CMDLINE6
+	string "Initial kernel command string for Archos boards"
+	depends on MACH_ARCHOS
+	default ""
+
 config OMAP3_EMU
 	bool "OMAP3 debugging peripherals"
 	depends on ARCH_OMAP3
@@ -301,6 +405,20 @@ config OMAP3_SDRC_AC_TIMING
 	  users who will wish to say yes at this point - almost everyone will
 	  wish to say no.  Selecting yes without understanding what is
 	  going on could result in system crashes;
+
+config CLOCKS_INIT
+	bool "Enable initialization of the omap3 clocks"
+	depends on MACH_ARCHOS
+	default n
+	help
+	   Reinitialize the omap36xx clocks on Archos devices.
+	   Normally it is done by the bootloader.
+	   Currently it supports the change of the dpll4 clocks.
+
+config CLOCKS_INIT_DEBUG
+	bool "Enable debug"
+	depends on CLOCKS_INIT
+	default n
 
 endmenu
 
