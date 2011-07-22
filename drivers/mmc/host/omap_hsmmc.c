@@ -192,8 +192,8 @@ static int omap_hsmmc_card_detect(struct device *dev, int slot)
 {
 	struct omap_mmc_platform_data *mmc = dev->platform_data;
 
-	/* NOTE: assumes card detect signal is active-low */
-	return !gpio_get_value_cansleep(mmc->slots[0].switch_pin);
+	// HACK: make it active-high
+	return gpio_get_value_cansleep(mmc->slots[0].switch_pin);
 }
 
 static int omap_hsmmc_get_wp(struct device *dev, int slot)

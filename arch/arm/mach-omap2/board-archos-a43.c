@@ -50,7 +50,7 @@
 #include <linux/wl127x-rfkill.h>
 #endif
 
-//#include "mmc-twl4030.h"
+#include "hsmmc.h"
 //#include "omap3-opp.h"
 #include "sdram-elpida-edk2132c2pb.h"
 #include "mux.h"
@@ -946,21 +946,28 @@ static struct regulator_consumer_supply board_vmmc_ext_supply = {
 };
 static struct regulator_init_data board_vmmc_ext = {
 	.constraints = {
-		.name 			= "vmmc",
-		.min_uV			= 3000000,
-		.max_uV			= 3000000,
-		.valid_modes_mask	= REGULATOR_MODE_NORMAL,
-		.always_on		= 0,
-		.boot_on		= 0,
+		.valid_ops_mask		= REGULATOR_CHANGE_STATUS,
 	},
 	.num_consumer_supplies	= 1,
 	.consumer_supplies	= &board_vmmc_ext_supply,
 };
 
+static struct fixed_voltage_config board_vmmc_ext_fixed = {
+	.supply_name		= "vmmc",
+	.microvolts		= 3000000,
+	// Set in archos_mmc1_setup_gpios().
+	//.gpio			= -EINVAL,
+	// TODO: 100ms is ok?
+	.startup_delay		= 100000, /* 100ms */
+	.enable_high		= 1,
+	.enabled_at_boot	= 0,
+	.init_data		= &board_vmmc_ext,
+};
+
 static struct platform_device board_vmmc_ext_device = {
-	.name		= "reg-fsw-voltage",
-	.id		= 0,
-	.dev.platform_data = &board_vmmc_ext,
+	.name		= "reg-fixed-voltage",
+	.id		= 1,
+	.dev.platform_data = &board_vmmc_ext_fixed,
 };
 
 static struct regulator_consumer_supply board_vmmc2_supply = {
@@ -985,7 +992,7 @@ static struct fixed_voltage_config board_vmmc2_fixed = {
 
 static struct platform_device board_vmmc2_device = {
 	.name		= "reg-fixed-voltage",
-	.id		= 1,
+	.id		= 2,
 	.dev.platform_data = &board_vmmc2_fixed,
 };
 
@@ -1956,31 +1963,32 @@ fail:
 	return ret;
 }
 
-// TODO:
-#if 0
-static struct twl4030_hsmmc_info mmc[] __initdata = {
+static struct omap2_hsmmc_info mmc[] __initdata = {
 	{
+		// SD slot.
 		.mmc		= 1,
-		.wires		= 4,
+		.caps		= MMC_CAP_4_BIT_DATA,
 		.gpio_wp	= -EINVAL,
-		.gpio_cd	= -EINVAL,
 	},
 	{
+		// eMMC.
 		.mmc		= 2,
-		.wires		= 8,
+		.caps		= MMC_CAP_4_BIT_DATA | MMC_CAP_8_BIT_DATA,
 		.gpio_wp	= -EINVAL,
 		.gpio_cd	= -EINVAL,
 		.ocr_mask	= MMC_VDD_165_195,
+		.nonremovable	= true,
 	},
 	{
 		.mmc		= 3,
-		.wires		= 4,
+		.caps		= MMC_CAP_4_BIT_DATA,
 		.gpio_wp	= -EINVAL,
 		.gpio_cd	= -EINVAL,
+		// TODO:
+		//.nonremovable	= true, ?
 	},
 	{}      /* Terminator */
 };
-#endif
 
 #ifdef CONFIG_CLOCKS_INIT
 static struct archos_clocks board_clocks __initdata = {
@@ -1995,9 +2003,7 @@ static struct archos_clocks board_clocks __initdata = {
 };
 #endif
 
-// TODO:
-#if 0
-static int archos_mmc1_setup_gpios(struct twl4030_hsmmc_info *c, struct regulator_init_data *reg_init_data)
+static int archos_mmc1_setup_gpios(struct omap2_hsmmc_info *c)
 {
  	const struct archos_sd_config *hsmmc_cfg;
 	struct archos_gpio gpio_hsmmc_power, gpio_hsmmc_cd,gpio_hsmmc_cpd;
@@ -2017,9 +2023,7 @@ static int archos_mmc1_setup_gpios(struct twl4030_hsmmc_info *c, struct regulato
 	printk(KERN_DEBUG "%s\n", __FUNCTION__);
 
 	gpio_hsmmc_power = hsmmc_cfg->rev[hardware_rev].sd_power;
-	GPIO_INIT_OUTPUT(gpio_hsmmc_power, "SD_POWER");
-
-	reg_init_data->driver_data = (void*)GPIO_PIN( gpio_hsmmc_power );
+	board_vmmc_ext_fixed.gpio = GPIO_PIN(gpio_hsmmc_power);
 	
 	gpio_hsmmc_cd = hsmmc_cfg->rev[hardware_rev].sd_detect;
 	gpio_hsmmc_cpd = hsmmc_cfg->rev[hardware_rev].sd_prewarn;
@@ -2028,12 +2032,11 @@ static int archos_mmc1_setup_gpios(struct twl4030_hsmmc_info *c, struct regulato
 	c->gpio_cd = GPIO_PIN(gpio_hsmmc_cd);	
 
 	/* Need to be here, before omap2_init_mmc which will correctly set the IRQ stuff */
-	GPIO_INIT_INPUT(gpio_hsmmc_cd, "SD_DETECT");
+	archos_gpio_init_input(&gpio_hsmmc_cd, "SD_DETECT");
 	gpio_free(c->gpio_cd);
 	
 	return 0;
 }
-#endif
 
 static void board_offmode_config(void)
 {
@@ -2120,14 +2123,11 @@ static void __init board_init(void)
 
 	//ads7846_dev_init();
 
-// TODO:
-#if 0
-	archos_mmc1_setup_gpios(&mmc[0], &board_vmmc_ext);
-	twl4030_mmc_init(mmc);
+	archos_mmc1_setup_gpios(&mmc[0]);
+	omap2_hsmmc_init(mmc);
 	board_vmmc_ext_supply.dev = mmc[0].dev;
 	board_vmmc2_supply.dev = mmc[1].dev;
-#endif
-	
+
 	// TODO:
 	//archos_audio_gpio_init();
 
