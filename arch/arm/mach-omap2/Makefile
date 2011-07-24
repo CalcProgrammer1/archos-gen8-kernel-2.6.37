@@ -195,8 +195,8 @@ obj-$(CONFIG_MACH_ARCHOS_A35DM)		+= board-archos-a35dm.o \
 obj-$(CONFIG_MACH_ARCHOS_A35DE)	        += board-archos-a35de.o \
 					   archos-lcd-a35.o
 
-obj-$(CONFIG_MACH_ARCHOS_A43)		+= board-archos-a43.o
-#					   archos-lcd-lg-fwvga43.o
+obj-$(CONFIG_MACH_ARCHOS_A43)		+= board-archos-a43.o \
+					   archos-lcd-lg-fwvga43.o
 #					   archos-compass.o \
 					   archos-vibrator.o \
 					   archos-nl5550.o \

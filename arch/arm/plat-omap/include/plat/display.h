@@ -124,6 +124,7 @@ enum omap_dss_venc_type {
 enum omap_display_caps {
 	OMAP_DSS_DISPLAY_CAP_MANUAL_UPDATE	= 1 << 0,
 	OMAP_DSS_DISPLAY_CAP_TEAR_ELIM		= 1 << 1,
+	OMAP_DSS_DISPLAY_CAP_VIDEO_MODE		= 1 << 2,
 };
 
 enum omap_dss_update_mode {

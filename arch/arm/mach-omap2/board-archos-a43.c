@@ -153,14 +153,13 @@ static struct archos_display_config display_config __initdata = {
         },
 };
 
-// TODO:
-//static int __init archos_lcd_panel_init(struct omap_dss_device *disp_data)
-//{
-	//switch (hardware_rev) {
-	//default:
-		//return panel_fwvga_43_init(disp_data);
-	//}
-//}
+static int __init archos_lcd_panel_init(struct omap_dss_device *disp_data)
+{
+	switch (hardware_rev) {
+	default:
+		return panel_fwvga_43_init(disp_data);
+	}
+}
 
 
 // TODO:
@@ -1593,7 +1592,7 @@ static struct omap_board_mux board_mux[] __initdata = {
 #endif
 
 	/* DSS data lines on alternative pins */
-	// HDMI. DSS_DATA18 to DSS_DATA23.
+	// archos_hdmi_gpio_init(). DSS_DATA18 to DSS_DATA23.
 	OMAP3_MUX(/* DSS_DATA0 */ DSS_DATA18,
 			OMAP_MUX_MODE3 | OMAP_PIN_OUTPUT | OMAP_PIN_OFF_OUTPUT_LOW),
 	OMAP3_MUX(/* DSS_DATA1 */ DSS_DATA19,
@@ -1638,7 +1637,7 @@ static struct omap_board_mux board_mux[] __initdata = {
 #endif
 
 	/* DSS functions on default pins */
-	// HDMI. DSS_HSYNC to DSS_DATA17.
+	// archos_hdmi_gpio_init(). DSS_HSYNC to DSS_DATA17.
 	OMAP3_MUX(/* DSS_HSYNC */ DSS_HSYNC,
 			OMAP_MUX_MODE0 | OMAP_PIN_OUTPUT | OMAP_PIN_OFF_OUTPUT_LOW),
 	OMAP3_MUX(/* DSS_VSYNC */ DSS_VSYNC,
@@ -1673,7 +1672,7 @@ static struct omap_board_mux board_mux[] __initdata = {
 			OMAP_MUX_MODE0 | OMAP_PIN_OUTPUT | OMAP_PIN_OFF_OUTPUT_LOW),
 
 	/* DSS functions on sysboot pins */
-	// HDMI. SYS_BOOT0 to SYS_BOOT6.
+	// archos_hdmi_gpio_init(). SYS_BOOT0 to SYS_BOOT6.
 	OMAP3_MUX(/* DSS_DATA18 */ SYS_BOOT0,
 			OMAP_MUX_MODE3 | OMAP_PIN_OUTPUT | OMAP_PIN_OFF_OUTPUT_LOW),
 	OMAP3_MUX(/* DSS_DATA19 */ SYS_BOOT1,
@@ -2099,11 +2098,10 @@ static void __init board_init(void)
 	wl127x_vio_leakage_fix();
 
 #if defined CONFIG_OMAP2_DSS
-	// TODO:
-	//if (archos_lcd_panel_init(&board_lcd_device) == 0) {
-		//board_dss_devices[num_displays++] = &board_lcd_device;
-		//board_dss_data.default_device = &board_lcd_device;
-	//}
+	if (archos_lcd_panel_init(&board_lcd_device) == 0) {
+		board_dss_devices[num_displays++] = &board_lcd_device;
+		board_dss_data.default_device = &board_lcd_device;
+	}
 	// TODO:
 	//board_dss_devices[num_displays++] = &board_hdmi_device;
 #ifdef CONFIG_OMAP2_DSS_DUMMY
