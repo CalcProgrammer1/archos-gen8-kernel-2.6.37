@@ -65,6 +65,7 @@
 
 // TODO: remove
 unsigned int hardware_rev = 5;
+EXPORT_SYMBOL(hardware_rev);
 
 // TODO:
 //static struct mma7660fc_pdata board_mma7660fc_pdata;
@@ -2141,5 +2142,4 @@ MACHINE_START(ARCHOS_A43, "Archos A43 board")
 	.init_irq	= board_init_irq,
 	.init_machine	= board_init,
 	.timer		= &omap_timer,
-	.fixup		= fixup_archos,
 MACHINE_END

@@ -228,8 +228,7 @@ obj-$(CONFIG_MACH_ARCHOS_A101IT)	+= board-archos-a10it.o \
 					   archos-usb-touchscreen.o \
 					   archos-usb-ohci.o
 
-obj-$(CONFIG_MACH_ARCHOS)		+= archos-fixup.o
-#					   archos-keys.o
+#obj-$(CONFIG_MACH_ARCHOS)		+= 
 #					   archos-accel.o \
 					   archos-audio.o \
 					   archos-battery.o \

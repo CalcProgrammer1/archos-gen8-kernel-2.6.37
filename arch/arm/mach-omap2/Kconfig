@@ -352,41 +352,6 @@ config MACH_ARCHOS
 	bool 
 	default n
 
-config CMDLINE0
-	string "Initial kernel command string for Archos boards"
-	depends on MACH_ARCHOS
-	default ""
-
-config CMDLINE1
-	string "Initial kernel command string for Archos boards"
-	depends on MACH_ARCHOS
-	default ""
-	
-config CMDLINE2
-	string "Initial kernel command string for Archos boards"
-	depends on MACH_ARCHOS
-	default ""
-
-config CMDLINE3
-	string "Initial kernel command string for Archos boards"
-	depends on MACH_ARCHOS
-	default ""
-
-config CMDLINE4
-	string "Initial kernel command string for Archos boards"
-	depends on MACH_ARCHOS
-	default ""
-
-config CMDLINE5
-	string "Initial kernel command string for Archos boards"
-	depends on MACH_ARCHOS
-	default ""
-
-config CMDLINE6
-	string "Initial kernel command string for Archos boards"
-	depends on MACH_ARCHOS
-	default ""
-
 config OMAP3_EMU
 	bool "OMAP3 debugging peripherals"
 	depends on ARCH_OMAP3
