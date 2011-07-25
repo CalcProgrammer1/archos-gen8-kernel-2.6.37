@@ -716,10 +716,9 @@ out:
 }
 
 /* VOLUME UP/DOWN */
-static int board_twl4030_keymap[] = {
+static uint32_t board_twl4030_keymap[] = {
 	KEY(0, 0, KEY_VOLUMEUP),
-	KEY(1, 0, KEY_VOLUMEDOWN),
-	0
+	KEY(0, 1, KEY_VOLUMEDOWN),
 };
 
 static struct matrix_keymap_data board_twl4030_map_data = {
