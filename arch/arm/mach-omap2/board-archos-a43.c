@@ -163,8 +163,6 @@ static int __init archos_lcd_panel_init(struct omap_dss_device *disp_data)
 }
 
 
-// TODO:
-#if 0
 static struct archos_tsp_config tsp_config __initdata = {
 	.nrev = 6,
 	.rev[0] = {
@@ -210,7 +208,6 @@ static struct archos_tsp_config tsp_config __initdata = {
 		.inversion_flags = X_INV | Y_INV,
 	},
 };
-#endif
 
 static struct archos_audio_config audio_config __initdata = {
 	.nrev = 6,
@@ -539,8 +536,7 @@ static struct archos_keys_config keys_config __initdata = {
 
 static struct omap_board_config_kernel board_config[] __initdata = {
 	{ ARCHOS_TAG_DISPLAY,	&display_config },
-	// TODO:
-	//{ ARCHOS_TAG_TSP,	&tsp_config },
+	{ ARCHOS_TAG_TSP,	&tsp_config },
 	{ ARCHOS_TAG_CHARGE,	&charge_config},
 	{ ARCHOS_TAG_AUDIO,     &audio_config},
 	{ ARCHOS_TAG_WIFI_BT,	&wifi_bt_dev_conf},
@@ -1456,10 +1452,9 @@ static struct omap_board_mux board_mux[] __initdata = {
 			OMAP_WAKEUP_EN | OMAP_PIN_INPUT_PULLUP |
 			OMAP_MUX_MODE0),
 
-#if 0
+	// Touchscreen IRQ.
 	OMAP3_MUX(/* GPIO24 */ ETK_D10,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT ),
-#endif
 	// Display reset.
 	OMAP3_MUX(/* GPIO25_OUT */ ETK_D11,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
@@ -1469,11 +1464,14 @@ static struct omap_board_mux board_mux[] __initdata = {
 			OMAP_MUX_MODE1 ),
 	OMAP3_MUX(/* GPIO178 */ MCSPI2_CLK,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
+#endif
 
 	/* TSC PWRON */
+	// Touchscreen power.
 	OMAP3_MUX(/* GPIO179 */ MCSPI2_SIMO,
 			OMAP_MUX_MODE4  | OMAP_PIN_INPUT),
 
+#if 0
 	OMAP3_MUX(/* GPIO27 */ ETK_D13,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
 	OMAP3_MUX(/* GPIO28 */ ETK_D14,
@@ -2119,7 +2117,7 @@ static void __init board_init(void)
 
 	//archos_accel_init(&board_mma7660fc_pdata);
 
-	//ads7846_dev_init();
+	ads7846_dev_init();
 
 	archos_mmc1_setup_gpios(&mmc[0]);
 	omap2_hsmmc_init(mmc);
@@ -2131,7 +2129,6 @@ static void __init board_init(void)
 
 	//archos_camera_mt9d113_init();
 	//archos_leds_init();
-	//archos_keys_init();
 	//archos_compass_init();
 }
 
