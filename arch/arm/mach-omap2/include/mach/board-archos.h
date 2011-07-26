@@ -517,6 +517,7 @@ extern void usbhdd_power(int on_off);
 
 extern int __init archos_accel_init(struct mma7660fc_pdata *pdata);
 int __init archos_touchscreen_goodix_init(struct goodix_gt80x_platform_data *pdata);
+extern int __init archos_wifi_init(void);
 
 extern int __init archos_usb2sata_init(void); 
 extern int __init ads7846_dev_init(void);

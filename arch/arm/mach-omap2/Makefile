@@ -228,7 +228,8 @@ obj-$(CONFIG_MACH_ARCHOS_A101IT)	+= board-archos-a10it.o \
 					   archos-usb-touchscreen.o \
 					   archos-usb-ohci.o
 
-obj-$(CONFIG_MACH_ARCHOS)		+= archos-touchscreen.o
+obj-$(CONFIG_MACH_ARCHOS)		+= archos-touchscreen.o \
+					   archos-wifi.o
 #					   archos-accel.o \
 					   archos-audio.o \
 					   archos-battery.o \
@@ -236,7 +237,6 @@ obj-$(CONFIG_MACH_ARCHOS)		+= archos-touchscreen.o
 					   archos-die_id.o \
 					   archos-keys.o \
 					   archos-leds.o \
-					   archos-wifi.o \
 					   mmc-twl4030.o \
 					   archos-usb-android.o
 

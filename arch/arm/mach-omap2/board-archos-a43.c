@@ -991,6 +991,35 @@ static struct platform_device board_vmmc2_device = {
 	.dev.platform_data = &board_vmmc2_fixed,
 };
 
+static struct regulator_consumer_supply board_vmmc3_supply = {
+	.supply	= "vmmc",
+};
+static struct regulator_init_data board_vmmc3 = {
+	.constraints = {
+		.valid_ops_mask		= REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &board_vmmc3_supply,
+};
+
+static struct fixed_voltage_config board_vmmc3_fixed = {
+	.supply_name		= "vmmc",
+	.microvolts		= 3000000,
+	// Set in board init.
+	//.gpio			= -EINVAL,
+	// TODO: 100ms is ok?
+	.startup_delay		= 100000, /* 100ms */
+	.enable_high		= 1,
+	.enabled_at_boot	= 0,
+	.init_data		= &board_vmmc3,
+};
+
+static struct platform_device board_vmmc3_device = {
+	.name		= "reg-fixed-voltage",
+	.id		= 3,
+	.dev.platform_data = &board_vmmc3_fixed,
+};
+
 static struct i2c_board_info __initdata board_i2c_bus1_info[] = {
 	{
 		I2C_BOARD_INFO("tps65921", 0x48),	// id to fix
@@ -1316,21 +1345,30 @@ static struct omap_board_mux board_mux[] __initdata = {
 			OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLUP | OMAP_PIN_OFF_INPUT_PULLDOWN),
 	OMAP3_MUX(/* MMC2_DAT7 */ SDMMC2_DAT7,
 			OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLUP | OMAP_PIN_OFF_INPUT_PULLDOWN),
+#endif
 
 	/* MMC3 */
+	// WiFi.
 	OMAP3_MUX(/* MMC3_CLK */ ETK_CLK,
 			OMAP_MUX_MODE2 | OMAP_PIN_INPUT_PULLUP),
+#if 0
 	OMAP3_MUX(/* MMC3_CMD */ MCSPI1_CS1,
 			OMAP_MUX_MODE3 | OMAP_PIN_INPUT_PULLUP),
+#endif
+	// WiFi.
 	OMAP3_MUX(/* MMC3_DAT0 */ ETK_D4,
 			OMAP_MUX_MODE2 | OMAP_PIN_INPUT_PULLUP),
+	// WiFi.
 	OMAP3_MUX(/* MMC3_DAT1 */ ETK_D5,
 			OMAP_MUX_MODE2 | OMAP_PIN_INPUT_PULLUP),
+	// WiFi.
 	OMAP3_MUX(/* MMC3_DAT2 */ ETK_D6,
 			OMAP_MUX_MODE2 | OMAP_PIN_INPUT_PULLUP),
+	// WiFi.
 	OMAP3_MUX(/* MMC3_DAT3 */ ETK_D3,
 			OMAP_MUX_MODE2 | OMAP_PIN_INPUT_PULLUP),
 
+#if 0
 	/* UART1 */
 	OMAP3_MUX(/* UART1_TX */ UART1_TX,
 			OMAP_MUX_MODE0 | OMAP_PIN_OUTPUT),
@@ -1480,21 +1518,28 @@ static struct omap_board_mux board_mux[] __initdata = {
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
 	OMAP3_MUX(/* GPIO109 */ CAM_D10,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
+#endif
 
+	// WiFi power.
 	OMAP3_MUX(/* GPIO111 */ CAM_XCLKB,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
+#if 0
 	OMAP3_MUX(/* SAFE_UP */ CAM_XCLKB,
 			OMAP_MUX_MODE7 | OMAP_PULL_ENA | OMAP_PULL_UP),
 	OMAP3_MUX(/* SAFE_DOWN */ CAM_XCLKB,
 			OMAP_MUX_MODE7 | OMAP_PULL_ENA),
+#endif
 
 
+	// WiFi IRQ.
 	OMAP3_MUX(/* GPIO114_UP */ CSI2_DX1,
 			OMAP_WAKEUP_EN |
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT_PULLUP),
 
+	// BT power. "bt kill switch".
 	OMAP3_MUX(/* GPIO162 */ MCBSP1_CLKX,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
+#if 0
 	OMAP3_MUX(/* GPIO115 */ CSI2_DY1,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
 
@@ -1581,8 +1626,11 @@ static struct omap_board_mux board_mux[] __initdata = {
 	/* mmc1 prewarn */
 	OMAP3_MUX(/* GPIO58_IN */ GPMC_NCS7,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
+#endif
+	// WiFi.
 	OMAP3_MUX(/* MMC3_CMD */ ETK_CTL,
 			OMAP_MUX_MODE2 | OMAP_PIN_INPUT_PULLUP),
+#if 0
 	OMAP3_MUX(/* GPIO126 */ CAM_STROBE,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
 	OMAP3_MUX(/* GPIO56_TRISTATE */ GPMC_NCS5,
@@ -1906,6 +1954,7 @@ static struct platform_device *board_devices[] __initdata = {
 	&board_vdds_dsi_device,
 	&board_vmmc_ext_device,
 	&board_vmmc2_device,
+	&board_vmmc3_device,
 #ifdef CONFIG_OMAP2_DSS
 	&board_dss_device,
 	// TODO:
@@ -1977,12 +2026,12 @@ static struct omap2_hsmmc_info mmc[] __initdata = {
 		.nonremovable	= true,
 	},
 	{
+		// WiFi.
 		.mmc		= 3,
-		.caps		= MMC_CAP_4_BIT_DATA,
+		.caps		= MMC_CAP_4_BIT_DATA | MMC_CAP_POWER_OFF_CARD,
 		.gpio_wp	= -EINVAL,
 		.gpio_cd	= -EINVAL,
-		// TODO:
-		//.nonremovable	= true, ?
+		.nonremovable	= true,
 	},
 	{}      /* Terminator */
 };
@@ -2120,10 +2169,14 @@ static void __init board_init(void)
 	ads7846_dev_init();
 
 	archos_mmc1_setup_gpios(&mmc[0]);
+	// TODO: get rid of magic number, this is WiFi power gpio.
+	board_vmmc3_fixed.gpio = 111;
 	omap2_hsmmc_init(mmc);
 	board_vmmc_ext_supply.dev = mmc[0].dev;
 	board_vmmc2_supply.dev = mmc[1].dev;
+	board_vmmc3_supply.dev = mmc[2].dev;
 
+	archos_wifi_init();
 	// TODO:
 	//archos_audio_gpio_init();
 
