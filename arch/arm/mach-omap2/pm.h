@@ -11,6 +11,8 @@
 #ifndef __ARCH_ARM_MACH_OMAP2_PM_H
 #define __ARCH_ARM_MACH_OMAP2_PM_H
 
+#include <linux/err.h>
+
 #include <plat/powerdomain.h>
 
 extern void *omap3_secure_ram_storage;
@@ -19,6 +21,15 @@ extern void omap_sram_idle(void);
 extern int omap3_can_sleep(void);
 extern int omap_set_pwrdm_state(struct powerdomain *pwrdm, u32 state);
 extern int omap3_idle_init(void);
+
+#if defined(CONFIG_PM_OPP)
+extern int omap3_opp_init(void);
+#else
+static inline int omap3_opp_init(void)
+{
+	return -EINVAL;
+}
+#endif
 
 struct cpuidle_params {
 	u8  valid;
@@ -84,5 +95,26 @@ extern unsigned int omap34xx_suspend_sz;
 extern unsigned int save_secure_ram_context_sz;
 extern unsigned int omap24xx_cpu_suspend_sz;
 extern unsigned int omap34xx_cpu_suspend_sz;
+
+#ifdef CONFIG_OMAP_SMARTREFLEX
+extern int omap_devinit_smartreflex(void);
+extern void omap_enable_smartreflex_on_init(void);
+#else
+static inline int omap_devinit_smartreflex(void)
+{
+	return -EINVAL;
+}
+
+static inline void omap_enable_smartreflex_on_init(void) {}
+#endif
+
+#ifdef CONFIG_TWL4030_CORE
+extern int omap3_twl_init(void);
+#else
+static inline int omap3_twl_init(void)
+{
+	return -EINVAL;
+}
+#endif
 
 #endif
