@@ -572,9 +572,6 @@ void __init twl4030_power_init(struct twl4030_power_data *twl4030_scripts)
 	err = twl_i2c_write_u8(TWL4030_MODULE_PM_MASTER,
 			TWL4030_PM_MASTER_KEY_CFG1,
 			TWL4030_PM_MASTER_PROTECT_KEY);
-
-	err = twl_i2c_write_u8(TWL4030_MODULE_PM_MASTER, R_KEY_1,
-				R_PROTECT_KEY);
 	if (err)
 		goto unlock;
 
