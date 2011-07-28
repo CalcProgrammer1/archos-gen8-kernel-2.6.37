@@ -1950,6 +1950,11 @@ static int __init omap_i2c_init(void)
 	return 0;
 }
 
+static struct platform_device sgx_device = {
+	.name		= "pvrsrvkm",
+	.id		= -1,
+};
+
 static struct platform_device *board_devices[] __initdata = {
 	&board_vdds_dsi_device,
 	&board_vmmc_ext_device,
@@ -1963,6 +1968,7 @@ static struct platform_device *board_devices[] __initdata = {
 #ifdef CONFIG_WL127X_RFKILL
 	&board_wl127x_device,
 #endif
+	&sgx_device,
 };
 
 static void __init archos_hdmi_gpio_init(
