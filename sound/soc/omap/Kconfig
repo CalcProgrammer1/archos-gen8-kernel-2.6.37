@@ -140,3 +140,13 @@ config SND_OMAP_SOC_IGEP0020
 	select SND_SOC_TWL4030
 	help
 	  Say Y if you want to add support for Soc audio on IGEP v2 board.
+
+config SND_OMAP_SOC_ARCHOS
+	tristate "SoC Audio support for Archos device"
+	depends on SND_OMAP_SOC && MACH_ARCHOS
+	select SND_OMAP_SOC_MCBSP
+	select SND_SOC_WM8988
+	select SND_SOC_WL1271
+	select SND_SOC_TDA19989
+	help
+	  Say Y if you want to add support for SoC audio on the Archos Gen8 board.

@@ -240,9 +240,9 @@ obj-$(CONFIG_MACH_ARCHOS_A101IT)	+= board-archos-a10it.o \
 					   archos-usb-ohci.o
 
 obj-$(CONFIG_MACH_ARCHOS)		+= archos-touchscreen.o \
+					   archos-audio.o \
 					   archos-wifi.o
 #					   archos-accel.o \
-					   archos-audio.o \
 					   archos-battery.o \
 					   archos-camera-ov7675.o \
 					   archos-die_id.o \

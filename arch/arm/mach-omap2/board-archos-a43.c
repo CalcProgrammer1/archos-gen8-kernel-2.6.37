@@ -1278,8 +1278,11 @@ static struct omap_board_mux board_mux[] __initdata = {
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
 	OMAP3_MUX(/* GPIO167 */ CAM_WEN,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
+#endif
+	// Audio HP power.
 	OMAP3_MUX(/* GPIO170 */ HDQ_SIO,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
+#if 0
 	OMAP3_MUX(/* GPIO175 */ MCSPI1_CS1,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
 	OMAP3_MUX(/* GPIO176_OUT */ MCSPI1_CS2,
@@ -1418,16 +1421,22 @@ static struct omap_board_mux board_mux[] __initdata = {
 
 	OMAP3_MUX(/* GPIO144 */ UART2_CTS,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT_PULLDOWN),
+#endif
 
 	/* McBSP */
+	// Audio.
 	OMAP3_MUX(/* MCBSP2_FSX */ MCBSP2_FSX,
 			OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLDOWN | OMAP_PIN_OFF_INPUT_PULLDOWN),
+	// Audio.
 	OMAP3_MUX(/* MCBSP2_CLKX */ MCBSP2_CLKX,
 			OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLDOWN | OMAP_PIN_OFF_INPUT_PULLDOWN),
+	// Audio.
 	OMAP3_MUX(/* MCBSP2_DR */ MCBSP2_DR,
 			OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLDOWN | OMAP_PIN_OFF_INPUT_PULLDOWN),
+	// Audio.
 	OMAP3_MUX(/* MCBSP2_DX */ MCBSP2_DX,
 			OMAP_MUX_MODE0 | OMAP_PIN_OUTPUT | OMAP_PIN_OFF_INPUT_PULLDOWN),
+#if 0
 	OMAP3_MUX(/* MCBSP3_FSX */ MCBSP1_FSX,
 			OMAP_MUX_MODE2 | OMAP_PIN_INPUT_PULLDOWN),
 	OMAP3_MUX(/* MCBSP3_CLKX */ MCBSP1_CLKX,
@@ -1516,9 +1525,10 @@ static struct omap_board_mux board_mux[] __initdata = {
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
 	OMAP3_MUX(/* GPIO22 */ ETK_D8,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
+#endif
+	// Audio HP detect.
 	OMAP3_MUX(/* GPIO109 */ CAM_D10,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
-#endif
 
 	// WiFi power.
 	OMAP3_MUX(/* GPIO111 */ CAM_XCLKB,
@@ -1756,9 +1766,12 @@ static struct omap_board_mux board_mux[] __initdata = {
 	/* Sys_clkout2 */
 	OMAP3_MUX(/* CLKOUT2 */ SYS_CLKOUT2,
 			OMAP_MUX_MODE0 | OMAP_PIN_OUTPUT),
+#endif
+	// Audio clock.
 	OMAP3_MUX(/* CLKOUT2 */ SYS_CLKOUT2,
 			OMAP_MUX_MODE0 | OMAP_PIN_OUTPUT),
 
+#if 0
 	/* USB to sata bridge */
 	OMAP3_MUX(/* GPIO120 */ SDMMC1_CLK,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
@@ -1772,28 +1785,38 @@ static struct omap_board_mux board_mux[] __initdata = {
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
 	OMAP3_MUX(/* GPIO125 */ SDMMC1_DAT3,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
+#endif
 
 	/* Bluetooth digital audio interface */
+	// Audio + BT?
 	OMAP3_MUX(/* MCBSP3_DX */ MCBSP3_DX,
 			OMAP_MUX_MODE0 | OMAP_PIN_OUTPUT),
+	// Audio + BT?
 	OMAP3_MUX(/* MCBSP3_DR */ MCBSP3_DR,
 			OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLDOWN),
+	// Audio + BT?
 	OMAP3_MUX(/* MCBSP3_CLX */ MCBSP3_CLKX,
 			OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLDOWN),
+	// Audio + BT?
 	OMAP3_MUX(/* MCBSP3_FSX */ MCBSP3_FSX,
 			OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLDOWN),
 
 	/* HDMI digital audio interface */
+	// Audio + HDMI?
 	OMAP3_MUX(/* MCBSP4_DX */ MCBSP4_DX,
 			OMAP_MUX_MODE0 | OMAP_PIN_OUTPUT | OMAP_PIN_OFF_OUTPUT_LOW),
+	// Audio + HDMI?
 	OMAP3_MUX(/* MCBSP4_DR */ MCBSP4_DR,
 			OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLDOWN),
+	// Audio + HDMI?
 	OMAP3_MUX(/* MCBSP4_CLX */ MCBSP4_CLKX,
 			OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLDOWN),
+	// Audio + HDMI?
 	OMAP3_MUX(/* MCBSP4_FSX */ MCBSP4_FSX,
 			OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLDOWN),
 
 
+#if 0
 	/* 3611 GPIO */
 	OMAP3_MUX(/* GPIO157 */ MCBSP1_FSR,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
@@ -2183,8 +2206,7 @@ static void __init board_init(void)
 	board_vmmc3_supply.dev = mmc[2].dev;
 
 	archos_wifi_init();
-	// TODO:
-	//archos_audio_gpio_init();
+	archos_audio_gpio_init();
 
 	//archos_camera_mt9d113_init();
 	//archos_leds_init();
