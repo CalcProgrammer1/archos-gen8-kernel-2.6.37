@@ -25,10 +25,12 @@
 #include <linux/regulator/fixed.h>
 #include <linux/regulator/machine.h>
 #include <linux/mmc/host.h>
+#include <linux/opp.h>
 
 #include <plat/board.h>
 #include <plat/common.h>
 #include <plat/display.h>
+#include <plat/omap_device.h>
 #include <plat/usb.h>
 
 #include <mach/hardware.h>
@@ -56,6 +58,7 @@
 #include "mux.h"
 #include "mux_remove.h"
 #include "control.h"
+#include "pm.h"
 
 
 #ifdef CONFIG_PM
@@ -1993,6 +1996,63 @@ static struct platform_device *board_devices[] __initdata = {
 #endif
 	&sgx_device,
 };
+
+static void __init archos_opp_init(void)
+{
+	int r = 0;
+	struct omap_hwmod *hwm;
+	struct device *dev;
+
+	r = omap3_opp_init();
+	/*
+	 * FIXME: We are now called with late_initcall() and
+	 * thus omap3_opp_init() has already been run once,
+	 * so we will get -EEXIST. This check should be removed
+	 * when our backport of opp/dvfs code gets updated
+	 * and late_initcall removed.
+	 */
+	if (r && r != -EEXIST) {
+		pr_err("%s: failed to init default opp table: %d\n", __func__, r);
+		return;
+	}
+
+	hwm = omap_hwmod_lookup("mpu");
+	if (!hwm) {
+		pr_err("%s: omap_hwmod_lookup failed\n", __func__);
+		return;
+	}
+	dev = &hwm->od->pdev.dev;
+	r = opp_enable(dev, 800000000);
+	if (r) {
+		pr_err("%s: failed to enable opp, err: %d\n", __func__, r);
+	}
+	r = opp_enable(dev, 1000000000);
+	if (r) {
+		pr_err("%s: failed to enable opp, err: %d\n", __func__, r);
+	}
+
+	hwm = omap_hwmod_lookup("iva");
+	if (!hwm) {
+		pr_err("%s: omap_hwmod_lookup failed\n", __func__);
+		return;
+	}
+	dev = &hwm->od->pdev.dev;
+	r = opp_enable(dev, 660000000);
+	if (r) {
+		pr_err("%s: failed to enable opp, err: %d\n", __func__, r);
+	}
+	r = opp_enable(dev, 800000000);
+	if (r) {
+		pr_err("%s: failed to enable opp, err: %d\n", __func__, r);
+	}
+}
+/*
+ * FIXME: using late_initcall to get this working with current backported
+ * version of opp/dvfs support. Currently archos_opp_init will fail if run
+ * from board_init due to some hwmod related inits that are not yet done.
+ * Move to normal call in board_init when updating the backport.
+ */
+late_initcall(archos_opp_init);
 
 static void __init archos_hdmi_gpio_init(
 		const struct archos_disp_conf* disp_conf)
