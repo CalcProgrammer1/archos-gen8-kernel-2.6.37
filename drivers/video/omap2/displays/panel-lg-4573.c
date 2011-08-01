@@ -32,73 +32,69 @@
 
 #include <plat/display.h>
 
+
 /* DSI Virtual channel. Hardcoded for now. */
 #define TCH 0
 
-#define DCS_READ_NUM_ERRORS	0x05
-#define DCS_READ_POWER_MODE	0x0a
-#define DCS_READ_MADCTL		0x0b
-#define DCS_READ_PIXEL_FORMAT	0x0c
-#define DCS_RDDSDR		0x0f
-#define DCS_SLEEP_IN		0x10
-#define DCS_SLEEP_OUT		0x11
-#define DCS_DISPLAY_OFF		0x28
-#define DCS_DISPLAY_ON		0x29
-#define DCS_COLUMN_ADDR		0x2a
-#define DCS_PAGE_ADDR		0x2b
-#define DCS_MEMORY_WRITE	0x2c
-#define DCS_TEAR_OFF		0x34
-#define DCS_TEAR_ON		0x35
-#define DCS_MEM_ACC_CTRL	0x36
-#define DCS_PIXEL_FORMAT	0x3a
-#define DCS_BRIGHTNESS		0x51
-#define DCS_CTRL_DISPLAY	0x53
-#define DCS_WRITE_CABC		0x55
-#define DCS_READ_CABC		0x56
-#define DCS_GET_ID1		0xda
-#define DCS_GET_ID2		0xdb
-#define DCS_GET_ID3		0xdc
-
 #define TAAL_ESD_CHECK_PERIOD	msecs_to_jiffies(5000)
 
-#define pw(x...) dsi_vc_dcs_write_nosync(0, (u8[]){x}, sizeof((u8[]){x}))
-
 #define GAMMA_ADJUST	1
-#if GAMMA_ADJUST
-struct gamma_val {
-	unsigned char add;
-	unsigned char par[9];
-};
 
-struct gamma_par {
 
-	struct gamma_val red_p;
-	struct gamma_val red_n;
-	struct gamma_val green_p;
-	struct gamma_val green_n;
-	struct gamma_val blue_p;
-	struct gamma_val blue_n;
-};
+// USER COMMAND SET
 
-#define gpw(x)	pw( x.add, x.par[0], x.par[1], x.par[2], x.par[3], \
-		x.par[4], x.par[5], x.par[6], \
-		x.par[7], x.par[8])
+#define LG_UCS_NOP		0x00
+#define LG_UCS_SWRESET		0x01
+#define LG_UCS_RDDPM		0x0a
+#define LG_UCS_RDDMADCTL	0x0b
+#define LG_UCS_RDDCOLMOD	0x0c
+#define LG_UCS_RDDIN		0x0d
+#define LG_UCS_SLPIN		0x10
+#define LG_UCS_SLPOUT		0x11
+#define LG_UCS_INVOFF		0x20
+#define LG_UCS_INVON		0x21
+#define LG_UCS_DISPOFF		0x28
+#define LG_UCS_DISPON		0x29
+#define LG_UCS_MADCTL		0x36
+#define LG_UCS_IDMOFF		0x38
+#define LG_UCS_IDMON		0x39
+#define LG_UCS_COLMOD		0x3a
+#define LG_UCS_WRDISBV		0x51
+#define LG_UCS_RDDISVB		0x52
+#define LG_UCS_WRCTRLD		0x53
+#define LG_UCS_RDCTRLD		0x54
+#define LG_UCS_WRCABC		0x55
+#define LG_UCS_RDCABC		0x56
+#define LG_UCS_WRCABCMB		0x5e
+#define LG_UCS_RDCABCMB		0x5f
 
-static struct gamma_par lg_gamma = {
-	{ 0xd0,
-	{ 0x00, 0x44, 0x74, 0x47, 0x22, 0x12, 0x61, 0x36, 0x05 }},
-	{ 0xd1,
-	{ 0x00, 0x44, 0x70, 0x47, 0x22, 0x02, 0x61, 0x36, 0x03 }},
-	{ 0xd2,
-	{ 0x00, 0x44, 0x74, 0x47, 0x22, 0x12, 0x61, 0x46, 0x05 }},
-	{ 0xd3,
-	{ 0x00, 0x44, 0x70, 0x47, 0x22, 0x02, 0x61, 0x46, 0x03 }},
-	{ 0xd4,
-	{ 0x00, 0x44, 0x74, 0x47, 0x22, 0x12, 0x61, 0x46, 0x05 }},
-	{ 0xd5,
-	{ 0x00, 0x44, 0x70, 0x47, 0x22, 0x02, 0x61, 0x46, 0x03 }},
-};
-#endif
+// MANUFACTURER COMMAND SET
+
+#define LG_MCS_RGBIF		0xb1
+#define LG_MCS_PANELSET		0xb2
+#define LG_MCS_PANELDRV		0xb3
+#define LG_MCS_DISPMODE		0xb4
+#define LG_MCS_DISPCTL1		0xb5
+#define LG_MCS_DISPCTL2		0xb6
+#define LG_MCS_OSCSET		0xc0
+#define LG_MCS_PWRCTL1		0xc1
+#define LG_MCS_PWRCTL2		0xc2
+#define LG_MCS_PWRCTL3		0xc3
+#define LG_MCS_PWRCTL4		0xc4
+#define LG_MCS_PWRCTL5		0xc5
+#define LG_MCS_PWRCTL6		0xc6
+#define LG_MCS_OFCCTL		0xc7
+#define LG_MCS_BLCTL		0xc8
+#define LG_MCS_RGAMMAP		0xd0
+#define LG_MCS_RGAMMAN		0xd1
+#define LG_MCS_GGAMMAP		0xd2
+#define LG_MCS_GGAMMAN		0xd3
+#define LG_MCS_BGAMMAP		0xd4
+#define LG_MCS_BGAMMAN		0xd5
+#define LG_MCS_TEST1		0xf0
+#define LG_MCS_OTP1		0xf8
+#define LG_MCS_OTP2		0xf9
+#define LG_MCS_OTP3		0xfa
 
 
 // HACK: it's needed to enable video mode.
@@ -177,34 +173,6 @@ static void hw_guard_wait(struct taal_data *td)
 		set_current_state(TASK_UNINTERRUPTIBLE);
 		schedule_timeout(wait);
 	}
-}
-
-static int taal_dcs_read_1(u8 dcs_cmd, u8 *data)
-{
-	int r;
-	u8 buf[1];
-
-	r = dsi_vc_dcs_read(TCH, dcs_cmd, buf, 1);
-
-	if (r < 0)
-		return r;
-
-	*data = buf[0];
-
-	return 0;
-}
-
-static int taal_dcs_write_0(u8 dcs_cmd)
-{
-	return dsi_vc_dcs_write(TCH, &dcs_cmd, 1);
-}
-
-static int taal_dcs_write_1(u8 dcs_cmd, u8 param)
-{
-	u8 buf[2];
-	buf[0] = dcs_cmd;
-	buf[1] = param;
-	return dsi_vc_dcs_write(TCH, buf, 2);
 }
 
 static int taal_sleep_in(struct taal_data *td)
@@ -449,84 +417,142 @@ static void taal_remove(struct omap_dss_device *dssdev)
 	kfree(td);
 }
 
+#define DW(x...) dsi_vc_dcs_write_nosync(TCH, (u8[]){x}, sizeof((u8[]){x}))
+
+#ifdef GAMMA
+static void lg_gamma(void)
+{
+// Shared values.
+# define LG_PKP 0x00, 0x44, 0x74
+# define LG_PRP 0x57
+# define LG_VRP 0x15, 0x03
+# define LG_PFP 0x61, 0x46
+# define LG_PMP 0x03
+	DW(LG_MCS_RGAMMAP, LG_PKP, LG_PRP, LG_VRP, LG_PFP, LG_PMP);
+	DW(LG_MCS_RGAMMAN, LG_PKP, LG_PRP, LG_VRP, LG_PFP, LG_PMP);
+	DW(LG_MCS_GGAMMAP, LG_PKP, LG_PRP, LG_VRP, LG_PFP, LG_PMP);
+	DW(LG_MCS_GGAMMAN, LG_PKP, LG_PRP, LG_VRP, LG_PFP, LG_PMP);
+	DW(LG_MCS_BGAMMAP, LG_PKP, LG_PRP, LG_VRP, LG_PFP, LG_PMP);
+	DW(LG_MCS_BGAMMAN, LG_PKP, LG_PRP, LG_VRP, LG_PFP, LG_PMP);
+}
+#else	// GAMMA
+# ifdef GAMMA_ADJUST
+static void lg_adjust_gamma(void)
+{
+// Shared values.
+#  define LG_PKPP 0x00, 0x44, 0x74
+#  define LG_PKPN 0x00, 0x44, 0x70
+#  define LG_PRP 0x47
+#  define LG_VRPP 0x22, 0x12
+#  define LG_VRPN 0x22, 0x02
+#  define LG_PFP 0x61, 0x46
+#  define LG_PMPP 0x05
+#  define LG_PMPN 0x03
+	DW(LG_MCS_RGAMMAP, LG_PKPP, LG_PRP, LG_VRPP, 0x61, 0x36, LG_PMPP);
+	DW(LG_MCS_RGAMMAN, LG_PKPN, LG_PRP, LG_VRPN, 0x61, 0x36, LG_PMPN);
+	DW(LG_MCS_GGAMMAP, LG_PKPP, LG_PRP, LG_VRPP, LG_PFP, LG_PMPP);
+	DW(LG_MCS_GGAMMAN, LG_PKPN, LG_PRP, LG_VRPN, LG_PFP, LG_PMPN);
+	DW(LG_MCS_BGAMMAP, LG_PKPP, LG_PRP, LG_VRPP, LG_PFP, LG_PMPP);
+	DW(LG_MCS_BGAMMAN, LG_PKPN, LG_PRP, LG_VRPN, LG_PFP, LG_PMPN);
+}
+# else	// GAMMA_ADJUST
+static void lg_noadjust_gamma(void)
+{
+// Shared values.
+#  define LG_PKP 0x00, 0x44, 0x44
+#  define LG_PRP 0x07
+#  define LG_VRPP 0x00, 0x12
+#  define LG_VRPN 0x00, 0x02
+#  define LG_PFP 0x61, 0x16
+#  define LG_PMPP 0x05
+#  define LG_PMPN 0x03
+	DW(LG_MCS_RGAMMAP, LG_PKP, LG_PRP, LG_VRPP, 0x61, 0x12, LG_PMPP);
+	DW(LG_MCS_RGAMMAN, LG_PKP, LG_PRP, LG_VRPN, LG_PFP, LG_PMPN);
+	DW(LG_MCS_GGAMMAP, LG_PKP, LG_PRP, LG_VRPP, LG_PFP, LG_PMPP);
+	DW(LG_MCS_GGAMMAN, LG_PKP, LG_PRP, LG_VRPN, LG_PFP, LG_PMPN);
+	DW(LG_MCS_BGAMMAP, LG_PKP, LG_PRP, LG_VRPP, LG_PFP, LG_PMPP);
+	DW(LG_MCS_BGAMMAN, LG_PKP, LG_PRP, LG_VRPN, LG_PFP, LG_PMPN);
+}
+# endif	// !GAMMA_ADJUST
+#endif	// !GAMMA
+
+#undef DW
+#undef LG_PFP
+#undef LG_PKP
+#undef LG_PKPN
+#undef LG_PKPP
+#undef LG_PMP
+#undef LG_PMPN
+#undef LG_PMPP
+#undef LG_PRP
+#undef LG_VRP
+#undef LG_VRPN
+#undef LG_VRPP
+
 static void gamma_settings(void)
 {
 #ifdef GAMMA
-	pw( 0xd0, 0x00, 0x44, 0x74, 0x57, 0x15, 0x03, 0x61, 0x46, 0x03 );
-	pw( 0xd1, 0x00, 0x44, 0x74, 0x57, 0x15, 0x03, 0x61, 0x46, 0x03 );
-	pw( 0xd2, 0x00, 0x44, 0x74, 0x57, 0x15, 0x03, 0x61, 0x46, 0x03 );
-	pw( 0xd3, 0x00, 0x44, 0x74, 0x57, 0x15, 0x03, 0x61, 0x46, 0x03 );
-	pw( 0xd4, 0x00, 0x44, 0x74, 0x57, 0x15, 0x03, 0x61, 0x46, 0x03 );
-	pw( 0xd5, 0x00, 0x44, 0x74, 0x57, 0x15, 0x03, 0x61, 0x46, 0x03 );
-#else
-#ifdef GAMMA_ADJUST
-	gpw( lg_gamma.red_p );
-	gpw( lg_gamma.red_n );
-	gpw( lg_gamma.green_p );
-	gpw( lg_gamma.green_n );
-	gpw( lg_gamma.blue_p );
-	gpw( lg_gamma.blue_n );
-#else
-	pw( 0xd0, 0x00, 0x44, 0x44, 0x07, 0x00, 0x12, 0x61, 0x12, 0x05 );
-	pw( 0xd1, 0x00, 0x44, 0x44, 0x07, 0x00, 0x02, 0x61, 0x16, 0x03 );
-	pw( 0xd2, 0x00, 0x44, 0x44, 0x07, 0x00, 0x12, 0x61, 0x16, 0x05 );
-	pw( 0xd3, 0x00, 0x44, 0x44, 0x07, 0x00, 0x02, 0x61, 0x16, 0x03 );
-	pw( 0xd4, 0x00, 0x44, 0x44, 0x07, 0x00, 0x12, 0x61, 0x16, 0x05 );
-	pw( 0xd5, 0x00, 0x44, 0x44, 0x07, 0x00, 0x02, 0x61, 0x16, 0x03 );
-#endif
-#endif
+	lg_gamma();
+#else	// GAMMA
+# ifdef GAMMA_ADJUST
+	lg_adjust_gamma();
+# else	// GAMMA_ADJUST
+	lg_noadjust_gamma();
+# endif	// !GAMMA_ADJUST
+#endif	// !GAMMA
 }
 
 static void panel_initial_settings(void)
 {
 	pr_debug("panel_initial_settings\n");
 
-	pw( 0x3a, 0x77 );
-	pw( 0x36, 0x00 ); 	/* RGB, no H/V flip */
-	
-	pw( 0xb2, 0x20, 0xd6 );
-	pw( 0xb3, 0x02 );
-	
-	pw( 0xb4, 0x04 );	/* display mode control "dithering off" */
-	pw( 0xb5, 0x10, 0x0f, 0x0f, 0x00, 0x01 );
+#define DW(x...) dsi_vc_dcs_write_nosync(TCH, (u8[]){x}, sizeof((u8[]){x}))
+	DW(LG_UCS_COLMOD, 0x70);	/* 24 bpp */
+	DW(LG_UCS_MADCTL, 0x00); 	/* RGB, no H/V flip */
+	DW(LG_MCS_PANELSET, 0x20, 0xd6);
+	DW(LG_MCS_PANELDRV, 0x02);	/* 2-dot inversion mode. */
+	DW(LG_MCS_DISPMODE, 0x04);	/* display mode control "dithering off" */
 
-	/* DISPCTL2: DISPLAY OK!! 
-	 * param 1: ASG=1, SDM=1, FHN=1, GSWAP=0, FVST=0 
-	 * param 2: CLW=0x15
-	 * param 3: GTO=0x02
-	 * param 4: GNO=0x0f
-	 * param 5: FTI=0x0f
-	 * param 6: GPM=0x1f
-	 */
-	pw( 0xb6, 0x03, 0x15, 0x02, 0x0f, 0x0f, 0x1f );
+	DW(LG_MCS_DISPCTL1, 0x10, 0x0f, 0x0f, 0x00, 0x01);
+	DW(LG_MCS_DISPCTL2, 0x03, 0x15, 0x02, 0x0f, 0x0f, 0x1f );
 	
 	/* power control */
-	pw( 0xc0, 0x01, 0x18 );		/* enable internal osc. */
-	pw( 0xc1, 0x00, 0x01 );
-	pw( 0xc3, 0x07, 0x04, 0x04, 0x04, 0x07 );
-	pw( 0xc4, 0x12, 0x33, 0x1a, 0x1a, 0x07, 0x49 );
-	pw( 0xc5, 0x6d );
-	pw( 0xc6, 0x44, 0x63, 0x00 );
+	DW(LG_MCS_OSCSET, 0x01, 0x18 );		/* enable internal osc. */
+	DW(LG_MCS_PWRCTL1, 0x00);
+	DW(LG_MCS_PWRCTL3, 0x07, 0x04, 0x04, 0x04, 0x07 );
+	DW(LG_MCS_PWRCTL4, 0x12, 0x33, 0x1a, 0x1a, 0x07, 0x49 );
+	DW(LG_MCS_PWRCTL5, 0x6d );
+	DW(LG_MCS_PWRCTL6, 0x44, 0x63, 0x00 );
+#undef DW
 	
 	gamma_settings();
-	
 }
 
-static void panel_sleep(int enable)
+static int panel_sleep(int enable)
 {
+	u8 cmd;
+
 	printk("panel_sleep(%i)\n", enable);
 	
 	if (enable) {
-		pw( 0x10 );
+		cmd = LG_UCS_DISPOFF;
+		dsi_vc_dcs_write_nosync(TCH, &cmd, 1);
 		msleep(500);
-		pw( 0x28 );
+
+		cmd = LG_UCS_SLPIN;
+		dsi_vc_dcs_write_nosync(TCH, &cmd, 1);
 		msleep(500);
 	} else {
-		pw( 0x11 );
+		cmd = LG_UCS_SLPOUT;
+		dsi_vc_dcs_write_nosync(TCH, &cmd, 1);
 		msleep(500);
-		pw( 0x29 );
+
+		cmd = LG_UCS_DISPON;
+		dsi_vc_dcs_write_nosync(TCH, &cmd, 1);
 		msleep(500);
 	}
+
+	return 0;
 }
 
 static int taal_power_on(struct omap_dss_device *dssdev)
@@ -665,16 +691,13 @@ static int taal_suspend(struct omap_dss_device *dssdev)
 	}
 
 	dsi_bus_lock();
-
-	taal_power_off(dssdev);
-
+	// TODO: fix suspend/resume.
+	//r = panel_sleep(1);
+	r = 0;
 	dsi_bus_unlock();
 
 	dssdev->state = OMAP_DSS_DISPLAY_SUSPENDED;
 
-	mutex_unlock(&td->lock);
-
-	return 0;
 err:
 	mutex_unlock(&td->lock);
 	return r;
@@ -695,20 +718,16 @@ static int taal_resume(struct omap_dss_device *dssdev)
 	}
 
 	dsi_bus_lock();
-
-	r = taal_power_on(dssdev);
-
+	//panel_initial_settings();
+	//r = panel_sleep(0);
+	r = 0;
 	dsi_bus_unlock();
 
-	if (r) {
-		dssdev->state = OMAP_DSS_DISPLAY_DISABLED;
-	} else {
+	if (r)
+		dssdev->state = OMAP_DSS_DISPLAY_SUSPENDED;
+	else
 		dssdev->state = OMAP_DSS_DISPLAY_ACTIVE;
-	}
 
-	mutex_unlock(&td->lock);
-
-	return r;
 err:
 	mutex_unlock(&td->lock);
 	return r;
