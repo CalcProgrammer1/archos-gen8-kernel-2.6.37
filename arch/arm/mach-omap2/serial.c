@@ -506,7 +506,7 @@ static void omap_uart_idle_init(struct omap_uart_state *uart)
 			wk_mask = OMAP3430_ST_UART2_MASK;
 			padconf = 0x17a;
 #if defined (CONFIG_MACH_ARCHOS)
-			padconf = 0x174;
+			padconf = 0x174; /* CONTROL_PADCONF_UART2_CTS[15:0] */
 #endif
 			break;
 		case 2:

@@ -1420,7 +1420,7 @@ static struct omap_board_mux board_mux[] __initdata = {
 	OMAP3_MUX(/* UART2_RTS */ UART2_RTS,
 			OMAP_MUX_MODE0 | OMAP_PIN_OUTPUT),
 	OMAP3_MUX(/* UART2_CTS */ UART2_CTS,
-			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
+			OMAP_MUX_MODE0 | OMAP_PIN_INPUT),
 
 	OMAP3_MUX(/* GPIO144 */ UART2_CTS,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT_PULLDOWN),
@@ -1908,6 +1908,7 @@ static struct omap_board_mux board_mux[] __initdata = {
 
 	OMAP3_MUX(/* GPT09 */ UART2_CTS,
 			OMAP_MUX_MODE2),
+	// AB26_3630_GPT09_OFF_HIGH mux has been added to Archos kernel recently.
 	OMAP3_MUX(/* GPT10 */ UART2_RTS,
 			OMAP_MUX_MODE2),
 
