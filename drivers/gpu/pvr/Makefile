@@ -29,8 +29,9 @@ obj-$(CONFIG_PVR_DEBUG_PDUMP)	+= pvrdbg.o
 pvrdbg-objs		:= tools/main.o tools/dbgdriv.o tools/ioctl.o	     \
 			   tools/hostfunc.o tools/hotkey.o
 
-
-DATE			:= $(shell date "+%a %B %d %Z %Y" )
+# It's getting recompiled again and again!
+#DATE			:= $(shell date "+%a %B %d %Z %Y" )
+DATE			:= "same_as_kernel"
 CBUILD			:= -O2						\
 			   -DPVR_BUILD_DIR="\"$(PVR_BUILD_DIR)\""	\
 			   -DPVR_BUILD_DATE="\"$(DATE)\""
