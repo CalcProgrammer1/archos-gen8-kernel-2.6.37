@@ -341,29 +341,16 @@ static struct attribute *taal_attrs[] = {
 static struct attribute_group taal_attr_group = {
 	.attrs = taal_attrs,
 };
-
-static void taal_hw_reset(struct omap_dss_device *dssdev)
-{
-	struct taal_data *td = dev_get_drvdata(&dssdev->dev);
-	struct nokia_dsi_panel_data *panel_data = get_panel_data(dssdev);
-
-	if (panel_data->reset_gpio == -1)
-		return;
-
-	gpio_set_value(panel_data->reset_gpio, 1);
-	if (td->panel_config->reset_sequence.high)
-		udelay(td->panel_config->reset_sequence.high);
-	/* reset the panel */
-	gpio_set_value(panel_data->reset_gpio, 0);
-	/* assert reset */
-	if (td->panel_config->reset_sequence.low)
-		udelay(td->panel_config->reset_sequence.low);
-	gpio_set_value(panel_data->reset_gpio, 1);
-	/* wait after releasing reset */
-	if (td->panel_config->sleep.hw_reset)
-		msleep(td->panel_config->sleep.hw_reset);
-}
 #endif
+
+static void taal_sw_reset(struct omap_dss_device *dssdev)
+{
+	u8 cmd;
+
+	cmd = LG_UCS_SWRESET;
+	dsi_vc_dcs_write_nosync(TCH, &cmd, 1);
+	msleep(10);	// min 5ms; in sleep-out min 120ms to next SLPOUT
+}
 
 static int taal_probe(struct omap_dss_device *dssdev)
 {
@@ -566,13 +553,12 @@ static int taal_power_on(struct omap_dss_device *dssdev)
 		goto err0;
 	}
 
-	// TODO: move platform_enable/disable code to this driver.
 	if (dssdev->platform_enable)
 		r = dssdev->platform_enable(dssdev);
 	if (r < 0)
 		goto err;
 
-	//taal_hw_reset(dssdev);
+	taal_sw_reset(dssdev);
 
 	omapdss_dsi_vc_enable_hs(TCH, false);
 

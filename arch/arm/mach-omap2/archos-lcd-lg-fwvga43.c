@@ -26,22 +26,6 @@
 static struct archos_disp_conf display_gpio;
 static int panel_state;
 
-static int panel_init(struct omap_dss_device *ddata)
-{
-	pr_debug("panel_init [%s]\n", ddata->name);
-
-	archos_gpio_init_output(&display_gpio.lcd_pwon, "LCD_PWON");
-	archos_gpio_init_output(&display_gpio.lcd_rst, "LCD_RST");
-
-#if !defined(CONFIG_FB_OMAP_BOOTLOADER_INIT)
-	if (GPIO_EXISTS(display_gpio.lcd_pwon))
-		gpio_set_value( GPIO_PIN(display_gpio.lcd_pwon), 0);
-	if (GPIO_EXISTS(display_gpio.lcd_rst))
-		gpio_set_value( GPIO_PIN(display_gpio.lcd_rst), 0);
-#endif
-	return 0;
-}
-
 static int panel_enable(struct omap_dss_device *disp)
 {
 	pr_info("panel_enable [%s]\n", disp->name);
@@ -58,7 +42,7 @@ static int panel_enable(struct omap_dss_device *disp)
 		gpio_set_value( GPIO_PIN(display_gpio.lcd_rst), 1 );
 		msleep(50);
 		gpio_set_value( GPIO_PIN(display_gpio.lcd_rst), 0 );
-		msleep(50);		// min 10ms
+		msleep(10);		// min 1ms
 		gpio_set_value( GPIO_PIN(display_gpio.lcd_rst), 1 );
 		msleep(50);		// min 10ms
 
@@ -69,15 +53,17 @@ static int panel_enable(struct omap_dss_device *disp)
 
 static void panel_disable(struct omap_dss_device *disp)
 {
-	pr_debug("panel_disable [%s]\n", disp->name);
+	pr_info("panel_disable [%s]\n", disp->name);
 
 	if (GPIO_EXISTS(display_gpio.lcd_rst))
 		gpio_set_value( GPIO_PIN(display_gpio.lcd_rst), 0 );
 	if (GPIO_EXISTS(display_gpio.lcd_pwon))
 		gpio_set_value( GPIO_PIN(display_gpio.lcd_pwon), 0 );
+	msleep(500);
 
 	panel_state = 0;
 }
+
 
 static struct omap_dss_device lg_fwvga_43_panel = {
 	.type = OMAP_DISPLAY_TYPE_DSI,
@@ -145,7 +131,12 @@ int __init panel_fwvga_43_init(struct omap_dss_device *disp_data)
 
 	display_gpio = disp_cfg->rev[hardware_rev];
 
-	panel_init(&lg_fwvga_43_panel);
+	archos_gpio_init_output(&display_gpio.lcd_pwon, "LCD_PWON");
+	archos_gpio_init_output(&display_gpio.lcd_rst, "LCD_RST");
+
+#if !defined(CONFIG_FB_OMAP_BOOTLOADER_INIT)
+	panel_disable(&lg_fwvga_43_panel);
+#endif
 
 	*disp_data = lg_fwvga_43_panel;
 
