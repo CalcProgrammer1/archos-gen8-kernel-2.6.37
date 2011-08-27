@@ -511,7 +511,9 @@ static void panel_initial_settings(void)
 	DW(LG_MCS_PWRCTL5, 0x6d );
 	DW(LG_MCS_PWRCTL6, 0x44, 0x63, 0x00 );
 #undef DW
-	
+	// Prevent DSI TX FIFO overflow.
+	msleep(1);
+
 	gamma_settings();
 }
 
