@@ -537,8 +537,9 @@ static int omap_dvfs_voltage_scale(struct omap_vdd_dvfs_info *dvfs_info)
 	} else if (curr_volt < volt) {
 		ret = omap_voltage_scale_vdd(voltdm, volt);
 		if (ret) {
-			pr_warning("%s: Unable to scale the %s to %ld volt\n",
-						__func__, voltdm->name, volt);
+			// TODO: HACK: suppress error messages for CORE.
+			//pr_warning("%s: Unable to scale the %s to %ld volt\n",
+						//__func__, voltdm->name, volt);
 			omap_sr_enable(voltdm);
 			mutex_unlock(&dvfs_info->scaling_mutex);
 			return ret;

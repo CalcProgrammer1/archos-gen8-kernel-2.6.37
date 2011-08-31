@@ -27,64 +27,41 @@
 #define OMAP3_VP_VSTEPMAX_VSTEPMAX	0x04
 #define OMAP3_VP_VLIMITTO_TIMEOUT_US	200
 
-#define OMAP3430_VP1_VLIMITTO_VDDMIN	0x14
-#define OMAP3430_VP1_VLIMITTO_VDDMAX	0x42
-#define OMAP3430_VP2_VLIMITTO_VDDMIN	0x18
-#define OMAP3430_VP2_VLIMITTO_VDDMAX	0x2c
+// TODO: it's not clear what values should be here, so just set to zero,
+// to prevent it from frying anything.
+#define OMAP3630_VP1_VLIMITTO_VDDMIN	0
+#define OMAP3630_VP1_VLIMITTO_VDDMAX	0
 
-#define OMAP3630_VP1_VLIMITTO_VDDMIN	0x18
-#define OMAP3630_VP1_VLIMITTO_VDDMAX	0x3c
-#define OMAP3630_VP2_VLIMITTO_VDDMIN	0x18
-#define OMAP3630_VP2_VLIMITTO_VDDMAX	0x30
-
-unsigned long twl4030_vsel_to_uv(const u8 vsel)
+#define STEP		12500
+#define OFF_VOLT	600000
+static unsigned long tps_vsel_to_uv(const u8 vsel)
 {
-	return (((vsel * 125) + 6000)) * 100;
+	return ((vsel * STEP) + OFF_VOLT);
 }
 
-u8 twl4030_uv_to_vsel(unsigned long uv)
+static u8 tps_uv_to_vsel(unsigned long uv)
 {
-	return DIV_ROUND_UP(uv - 600000, 12500);
+	return DIV_ROUND_UP(uv - OFF_VOLT, STEP);
 }
 
 static struct omap_volt_pmic_info omap3_mpu_volt_info = {
-	.slew_rate		= 4000,
-	.step_size		= 12500,
+	.slew_rate		= 16000,
+	.step_size		= STEP,
 	.on_volt		= 1200000,
-	.onlp_volt		= 1000000,
-	.ret_volt		= 975000,
-	.off_volt		= 600000,
-	.volt_setup_time	= 0xfff,
+	.onlp_volt		= 1025000,
+	.ret_volt		= 1012500,
+	.off_volt		= OFF_VOLT,
+	.volt_setup_time	= 1000,
 	.vp_erroroffset		= OMAP3_VP_CONFIG_ERROROFFSET,
 	.vp_vstepmin		= OMAP3_VP_VSTEPMIN_VSTEPMIN,
 	.vp_vstepmax		= OMAP3_VP_VSTEPMAX_VSTEPMAX,
-	.vp_vddmin		= OMAP3430_VP1_VLIMITTO_VDDMIN,
-	.vp_vddmax		= OMAP3430_VP1_VLIMITTO_VDDMAX,
+	.vp_vddmin		= OMAP3630_VP1_VLIMITTO_VDDMIN,
+	.vp_vddmax		= OMAP3630_VP1_VLIMITTO_VDDMAX,
 	.vp_timeout_us		= OMAP3_VP_VLIMITTO_TIMEOUT_US,
 	.i2c_slave_addr		= OMAP3_SRI2C_SLAVE_ADDR,
 	.pmic_reg		= OMAP3_VDD_MPU_SR_CONTROL_REG,
-	.vsel_to_uv		= twl4030_vsel_to_uv,
-	.uv_to_vsel		= twl4030_uv_to_vsel,
-};
-
-static struct omap_volt_pmic_info omap3_core_volt_info = {
-	.slew_rate		= 4000,
-	.step_size		= 12500,
-	.on_volt                = 1200000,
-	.onlp_volt              = 1000000,
-	.ret_volt               = 975000,
-	.off_volt               = 600000,
-	.volt_setup_time        = 0xfff,
-	.vp_erroroffset		= OMAP3_VP_CONFIG_ERROROFFSET,
-	.vp_vstepmin		= OMAP3_VP_VSTEPMIN_VSTEPMIN,
-	.vp_vstepmax		= OMAP3_VP_VSTEPMAX_VSTEPMAX,
-	.vp_vddmin		= OMAP3430_VP2_VLIMITTO_VDDMIN,
-	.vp_vddmax		= OMAP3430_VP2_VLIMITTO_VDDMAX,
-	.vp_timeout_us		= OMAP3_VP_VLIMITTO_TIMEOUT_US,
-	.i2c_slave_addr		= OMAP3_SRI2C_SLAVE_ADDR,
-	.pmic_reg		= OMAP3_VDD_CORE_SR_CONTROL_REG,
-	.vsel_to_uv		= twl4030_vsel_to_uv,
-	.uv_to_vsel		= twl4030_uv_to_vsel,
+	.vsel_to_uv		= tps_vsel_to_uv,
+	.uv_to_vsel		= tps_uv_to_vsel,
 };
 
 int __init omap3_twl_init(void)
@@ -94,18 +71,8 @@ int __init omap3_twl_init(void)
 	if (!cpu_is_omap34xx())
 		return -ENODEV;
 
-	if (cpu_is_omap3630()) {
-		omap3_mpu_volt_info.vp_vddmin = OMAP3630_VP1_VLIMITTO_VDDMIN;
-		omap3_mpu_volt_info.vp_vddmax = OMAP3630_VP1_VLIMITTO_VDDMAX;
-		omap3_core_volt_info.vp_vddmin = OMAP3630_VP2_VLIMITTO_VDDMIN;
-		omap3_core_volt_info.vp_vddmax = OMAP3630_VP2_VLIMITTO_VDDMAX;
-	}
-
 	voltdm = omap_voltage_domain_lookup("mpu");
 	omap_voltage_register_pmic(voltdm, &omap3_mpu_volt_info);
-
-	voltdm = omap_voltage_domain_lookup("core");
-	omap_voltage_register_pmic(voltdm, &omap3_core_volt_info);
 
 	return 0;
 }

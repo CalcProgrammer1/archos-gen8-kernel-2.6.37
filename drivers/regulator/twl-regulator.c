@@ -308,6 +308,7 @@ static const u16 VDAC_VSEL_table[] = {
 	1200, 1300, 1800, 1800,
 };
 static const u16 VDD1_VSEL_table[] = {
+	// Add all vsels.
 	800, 1450,
 };
 static const u16 VDD2_VSEL_table[] = {

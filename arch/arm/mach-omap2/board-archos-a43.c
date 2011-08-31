@@ -670,6 +670,10 @@ static struct regulator_consumer_supply board_2v8d_cam_supply = {
 	//.dev		= &a43_camera_device.dev,
 };
 
+//static struct regulator_consumer_supply board_vdd1_supply = {
+	//REGULATOR_SUPPLY("mpu", NULL);
+//};
+
 /* consumer for vdds_dsi which is permanently enabled */
 static struct regulator_consumer_supply board_vdds_dsi_supply = {
 	.supply		= "vdds_dsi",
@@ -776,6 +780,19 @@ static struct regulator_init_data board_vaux2 = {
 	.num_consumer_supplies	= 1,
 	.consumer_supplies	= &board_2v8d_cam_supply,
 };
+
+/*
+static struct regulator_init_data board_vdd1 = {
+	.constraints = {
+		.min_uV			= 1012500,
+		.max_uV			= 1375000,
+		.valid_modes_mask	= REGULATOR_MODE_FAST,
+		.valid_ops_mask		= REGULATOR_CHANGE_VOLTAGE
+					| REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &board_vdd1_supply,
+};*/
 
 static struct twl4030_usb_data board_usb_data = {
 	.usb_mode	= T2_USB_MODE_ULPI,
@@ -913,6 +930,7 @@ static struct twl4030_platform_data board_tps65921_pdata = {
 	.vmmc1          = &board_vmmc1, /* used for VACC :-( */
 	.vdac		= &board_vdac,
 	.vaux2          = &board_vaux2,
+	//.vdd1		= &board_vdd1,
 };
 
 /* fixed dummy regulator for 1.8v vdds_dsi rail */

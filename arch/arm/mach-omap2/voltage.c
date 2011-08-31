@@ -24,6 +24,7 @@
 #include <linux/err.h>
 #include <linux/debugfs.h>
 #include <linux/slab.h>
+#include <linux/regulator/consumer.h>
 
 #include <plat/common.h>
 #include <plat/voltage.h>
@@ -207,6 +208,10 @@ static int nom_volt_debug_get(void *data, u64 *val)
 DEFINE_SIMPLE_ATTRIBUTE(vp_volt_debug_fops, vp_volt_debug_get, NULL, "%llu\n");
 DEFINE_SIMPLE_ATTRIBUTE(nom_volt_debug_fops, nom_volt_debug_get, NULL,
 								"%llu\n");
+// TODO: HACK: comment out code which deals with voltage processor (?).
+// It's not clear how to fill registers correctly.
+// Using power regulator (TPS) alone is enough for CPU scaling.
+#if 0
 static void vp_latch_vsel(struct omap_vdd_info *vdd)
 {
 	u32 vpconfig;
@@ -245,6 +250,7 @@ static void vp_latch_vsel(struct omap_vdd_info *vdd)
 	/* Clear initVDD copy trigger bit */
 	vdd->write_reg(vpconfig, mod, vdd->vp_offs.vpconfig);
 }
+#endif
 
 /* Generic voltage init functions */
 static void __init vp_init(struct omap_vdd_info *vdd)
@@ -408,6 +414,7 @@ static void _post_volt_scale(struct omap_vdd_info *vdd,
 	vdd->curr_volt = target_volt;
 }
 
+#if 0
 /* vc_bypass_scale_voltage - VC bypass method of voltage scaling */
 static int vc_bypass_scale_voltage(struct omap_vdd_info *vdd,
 		unsigned long target_volt)
@@ -557,6 +564,7 @@ static int vp_forceupdate_scale_voltage(struct omap_vdd_info *vdd,
 
 	return 0;
 }
+#endif
 
 /* OMAP3 specific voltage init functions */
 
@@ -628,6 +636,53 @@ static void __init omap3_vc_init(struct omap_vdd_info *vdd)
 	vdd->write_reg(OMAP3_VOLTOFFSET, mod, OMAP3_PRM_VOLTOFFSET_OFFSET);
 	vdd->write_reg(OMAP3_VOLTSETUP2, mod, OMAP3_PRM_VOLTSETUP2_OFFSET);
 	is_initialized = true;
+}
+
+// TODO: HACK: get rid of this hack.
+static int vp_regulator_scale_voltage(struct omap_vdd_info *vdd,
+		unsigned long uv)
+{
+	vdd->curr_volt = uv;
+	return 0;
+
+	// Don't change voltage for now.
+#if 0
+	struct regulator *reg;
+	int interval = vdd->pmic_info->step_size / 2 - 1;
+	int current_uv, err;
+	unsigned long delay;
+
+	reg = regulator_get(NULL, vdd->voltdm.name);
+	if (!reg) {
+		pr_err("%s: no regulator for %s\n",
+				__func__, vdd->voltdm.name);
+		return -EINVAL;
+	}
+
+	current_uv = regulator_get_voltage(reg);
+	if (current_uv < 0) {
+		pr_err("%s: couldn't get voltage for %s\n",
+				__func__, vdd->voltdm.name);
+		return -EINVAL;
+	}
+
+	err = regulator_set_voltage(reg, uv - interval, uv + interval);
+	if (err < 0) {
+		pr_err("%s: couldn't set voltage %lu for %s\n",
+				__func__, uv, vdd->voltdm.name);
+		return -EINVAL;
+	}
+
+	// Wait till voltage is set up. (Same way as in _post_volt_scale()).
+	/* 2us added as buffer. */
+	delay = (abs(current_uv - uv) /
+			vdd->pmic_info->slew_rate) + 2;
+	udelay(delay);
+
+	vdd->curr_volt = uv;
+
+	return 0;
+#endif
 }
 
 /* Sets up all the VDD related info for OMAP3 */
@@ -703,7 +758,7 @@ static int __init omap3_vdd_data_configure(struct omap_vdd_info *vdd)
 	vdd->prm_irqst_reg = OMAP3_PRM_IRQSTATUS_MPU_OFFSET;
 	vdd->read_reg = omap3_voltage_read_reg;
 	vdd->write_reg = omap3_voltage_write_reg;
-	vdd->volt_scale = vp_forceupdate_scale_voltage;
+	vdd->volt_scale = vp_regulator_scale_voltage;
 	vdd->vp_enabled = false;
 
 	/* VC parameters */
@@ -819,6 +874,7 @@ unsigned long omap_vp_get_curr_volt(struct voltagedomain *voltdm)
 	return vdd->pmic_info->vsel_to_uv(curr_vsel);
 }
 
+#if 0
 /**
  * omap_vp_enable() - API to enable a particular VP
  * @voltdm:	pointer to the VDD whose VP is to be enabled.
@@ -913,6 +969,7 @@ void omap_vp_disable(struct voltagedomain *voltdm)
 
 	return;
 }
+#endif
 
 /**
  * omap_voltage_scale_vdd() - API to scale voltage of a particular
@@ -936,8 +993,10 @@ int omap_voltage_scale_vdd(struct voltagedomain *voltdm,
 	vdd = container_of(voltdm, struct omap_vdd_info, voltdm);
 
 	if (!vdd->volt_scale) {
-		pr_err("%s: No voltage scale API registered for vdd_%s\n",
-			__func__, voltdm->name);
+		// TODO: HACK: suppress error messages for CORE.
+		// Can CORE voltage be scaled in a43 case?.
+		//pr_err("%s: No voltage scale API registered for vdd_%s\n",
+			//__func__, voltdm->name);
 		return -ENODATA;
 	}
 
@@ -1095,6 +1154,7 @@ struct dentry *omap_voltage_get_dbgdir(struct voltagedomain *voltdm)
 	return vdd->debug_dir;
 }
 
+#if 0
 /**
  * omap_change_voltscale_method() - API to change the voltage scaling method.
  * @voltdm:	pointer to the VDD whose voltage scaling method
@@ -1129,6 +1189,7 @@ void omap_change_voltscale_method(struct voltagedomain *voltdm,
 			"to an unsupported one!\n", __func__);
 	}
 }
+#endif
 
 /**
  * omap_voltage_domain_lookup() - API to get the voltage domain pointer
