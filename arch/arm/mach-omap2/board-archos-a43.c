@@ -38,10 +38,7 @@
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 
-//#include <mach/mcspi.h>
 #include <mach/gpio.h>
-//#include <mach/gpmc.h>
-
 #include <asm/io.h>
 #include <asm/delay.h>
 #include <mach/board-archos.h>
@@ -53,13 +50,11 @@
 #endif
 
 #include "hsmmc.h"
-//#include "omap3-opp.h"
 #include "sdram-elpida-edk2132c2pb.h"
 #include "mux.h"
 #include "mux_remove.h"
 #include "control.h"
 #include "pm.h"
-
 
 #ifdef CONFIG_PM
 // TODO:

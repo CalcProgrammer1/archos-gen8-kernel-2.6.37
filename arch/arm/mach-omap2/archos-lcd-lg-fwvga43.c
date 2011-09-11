@@ -16,7 +16,6 @@
 
 #include <plat/display.h>
 #include <plat/board.h>
-#include <plat/nokia-dsi-panel.h>
 
 #include <mach/gpio.h>
 #include <mach/archos-gpio.h>
@@ -129,6 +128,7 @@ int __init panel_fwvga_43_init(struct omap_dss_device *disp_data)
 		return ret;
 	}
 
+	*disp_data = lg_fwvga_43_panel;
 	display_gpio = disp_cfg->rev[hardware_rev];
 
 	archos_gpio_init_output(&display_gpio.lcd_pwon, "LCD_PWON");
@@ -137,8 +137,6 @@ int __init panel_fwvga_43_init(struct omap_dss_device *disp_data)
 #if !defined(CONFIG_FB_OMAP_BOOTLOADER_INIT)
 	panel_disable(&lg_fwvga_43_panel);
 #endif
-
-	*disp_data = lg_fwvga_43_panel;
 
 	return 0;
 }
