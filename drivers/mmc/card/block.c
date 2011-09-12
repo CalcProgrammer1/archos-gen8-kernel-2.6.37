@@ -21,6 +21,7 @@
 #include <linux/module.h>
 #include <linux/init.h>
 
+#include <linux/ctype.h>
 #include <linux/kernel.h>
 #include <linux/fs.h>
 #include <linux/slab.h>
@@ -65,22 +66,159 @@ static int max_devices;
 /* 256 minors, so at most 256 separate devices */
 static DECLARE_BITMAP(dev_use, 256);
 
+#ifdef CONFIG_MMC_BLOCK_CARD_SPLIT
+
+#define MMC_BLOCK_NUM_CARD_SLICES	(4)
+#define MMC_BLOCK_NUM_SLICED_CARDS	(4)
+
+#ifdef CONFIG_MMC_BLOCK_CARD_SPLIT_PARAMETER
+static const char *split_params_default_string = CONFIG_MMC_BLOCK_CARD_SPLIT_PARAMETER;
+#else
+static const char *split_params_default_string = "";
+#endif
+
+static char *split_params_string;
+
+static struct sliced_card {
+	int host_id;
+	int dev_id;
+	u64 size[MMC_BLOCK_NUM_CARD_SLICES];
+	int num_slices;
+	int initialized;
+} sliced_cards[MMC_BLOCK_NUM_SLICED_CARDS];
+static int num_sliced_cards;
+
+#endif /* CONFIG_MMC_BLOCK_CARD_SPLIT */
+
 /*
  * There is one mmc_blk_data per slot.
  */
 struct mmc_blk_data {
 	spinlock_t	lock;
-	struct gendisk	*disk;
+#ifdef CONFIG_MMC_BLOCK_CARD_SPLIT
+	struct gendisk	*disk[MMC_BLOCK_NUM_CARD_SLICES+1];
+#else
+	struct gendisk	*disk[1];
+#endif
+	int num_disks;
+
 	struct mmc_queue queue;
 
 	unsigned int	usage;
 	unsigned int	read_only;
+#ifdef CONFIG_MMC_BLOCK_CARD_SPLIT
+	sector_t	disk_start[MMC_BLOCK_NUM_CARD_SLICES+1];
+	sector_t	disk_num_sects[MMC_BLOCK_NUM_CARD_SLICES+1];
+#else
+	sector_t	disk_start[1];
+	sector_t	disk_num_sects[1];
+#endif
 };
+
+#ifdef CONFIG_MMC_BLOCK_CARD_SPLIT
+module_param_named(split, split_params_string, charp, S_IRUGO);
+MODULE_PARM_DESC(file, "names of backing files or devices");
+#endif
 
 static DEFINE_MUTEX(open_lock);
 
 module_param(perdev_minors, int, 0444);
 MODULE_PARM_DESC(perdev_minors, "Minors numbers to allocate per device");
+
+static int mmc_get_disk_index(struct mmc_blk_data *md, struct gendisk *disk)
+{
+	int i;
+	for (i=0; i<md->num_disks; i++) {
+		if (disk == md->disk[i])
+			return i;
+	}
+	
+	return -1;
+}
+
+#ifdef CONFIG_MMC_BLOCK_CARD_SPLIT
+static int parse_split_params(struct sliced_card *cards, int *num_cards, const char *params)
+{
+	const char *start = params, *end = params;
+	int state = 0;
+	int id = -1;
+	u64 size = 0;
+	
+	if (params == NULL)
+		return -1;
+	
+	printk("mmcblk: params: %s\n", params);	
+
+	*num_cards = -1;
+	
+	do {
+		if (state == 0 || state == 2 || state == 4) {
+			if (!isdigit(*end)) {
+				return -1;
+			}
+			size = 1;
+			state++;
+		} else if (state == 1 || state == 3 || state == 5) {
+			if (*end == '.') {
+				id = simple_strtoul(start, NULL, 10);
+				start = end+1;
+				if (++(*num_cards) == MMC_BLOCK_NUM_SLICED_CARDS)
+					return 0;
+				cards[*num_cards].host_id = id;
+				state = 2;
+			} else if (*end == ':') {
+				id = simple_strtoul(start, NULL, 10);
+				start = end+1;
+				cards[*num_cards].dev_id = id;
+				state = 4;			
+			} else if (!isdigit(*end)) {
+				switch(*end) {
+					case 'G': 
+						size = 0x40000000; 
+						break;
+					case 'M': 
+						size = 0x100000; 
+						break;
+					case 'k':
+					case 'K': 
+						size = 0x400; 
+						break;
+					case ',':
+					case '\0':
+						size *= (u64)simple_strtoul(start, NULL, 10);
+						start = end+1;
+						if (*num_cards >= 0) {
+							if (cards[*num_cards].num_slices < MMC_BLOCK_NUM_CARD_SLICES) {
+								cards[*num_cards].size[cards[*num_cards].num_slices] = size;
+printk("parse, card: %d, slice: %d, size: %llu\n",cards[*num_cards].dev_id, cards[*num_cards].num_slices, size);
+								cards[*num_cards].num_slices++;
+							}
+						}					
+					case 'B':
+					case 'b':
+						break;
+					
+					default:
+						return -1;
+				}
+			
+				if (*end == ',') {
+					state = 4;
+				} else if (*end == '\0') {
+					++(*num_cards);
+					break;
+				}
+			}
+		} else {
+			return -1;
+		}
+		end++;
+	} while (1);
+	
+	
+	return 0;
+}
+#endif
 
 static struct mmc_blk_data *mmc_blk_get(struct gendisk *disk)
 {
@@ -97,22 +235,29 @@ static struct mmc_blk_data *mmc_blk_get(struct gendisk *disk)
 	return md;
 }
 
+static inline int mmc_get_devidx(struct gendisk *disk)
+{
+	int devmaj = MAJOR(disk_devt(disk));
+	int devidx = MINOR(disk_devt(disk)) / perdev_minors;
+
+	if (!devmaj)
+		devidx = disk->first_minor / perdev_minors;
+	return devidx;
+}
+
 static void mmc_blk_put(struct mmc_blk_data *md)
 {
 	mutex_lock(&open_lock);
 	md->usage--;
 	if (md->usage == 0) {
-		int devmaj = MAJOR(disk_devt(md->disk));
-		int devidx = MINOR(disk_devt(md->disk)) / perdev_minors;
-
-		if (!devmaj)
-			devidx = md->disk->first_minor / perdev_minors;
+		int i;
 
 		blk_cleanup_queue(md->queue.queue);
-
-		__clear_bit(devidx, dev_use);
-
-		put_disk(md->disk);
+		for (i = 0; i < md->num_disks; i++) {
+			int devidx = mmc_get_devidx(md->disk[i]);
+			__clear_bit(devidx, dev_use);
+			put_disk(md->disk[i]);
+		}
 		kfree(md);
 	}
 	mutex_unlock(&open_lock);
@@ -334,10 +479,17 @@ out:
 static int mmc_blk_issue_rw_rq(struct mmc_queue *mq, struct request *req)
 {
 	struct mmc_blk_data *md = mq->data;
+	int disk_index = mmc_get_disk_index(md, req->rq_disk);
 	struct mmc_card *card = md->queue.card;
 	struct mmc_blk_request brq;
 	int ret = 1, disable_multi = 0;
 
+	if (disk_index < 0) {
+		printk(KERN_ERR "%s: invalid disk_index (%d)\n",
+				req->rq_disk->disk_name, disk_index);
+		return 0;
+	}
+	
 	mmc_claim_host(card->host);
 
 	do {
@@ -348,7 +500,7 @@ static int mmc_blk_issue_rw_rq(struct mmc_queue *mq, struct request *req)
 		brq.mrq.cmd = &brq.cmd;
 		brq.mrq.data = &brq.data;
 
-		brq.cmd.arg = blk_rq_pos(req);
+		brq.cmd.arg = blk_rq_pos(req) + md->disk_start[disk_index];
 		if (!mmc_card_blockaddr(card))
 			brq.cmd.arg <<= 9;
 		brq.cmd.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_ADTC;
@@ -579,12 +731,16 @@ static inline int mmc_blk_readonly(struct mmc_card *card)
 static struct mmc_blk_data *mmc_blk_alloc(struct mmc_card *card)
 {
 	struct mmc_blk_data *md;
-	int devidx, ret;
-
-	devidx = find_first_zero_bit(dev_use, max_devices);
-	if (devidx >= max_devices)
-		return ERR_PTR(-ENOSPC);
-	__set_bit(devidx, dev_use);
+#ifdef CONFIG_MMC_BLOCK_CARD_SPLIT
+	int devidx[MMC_BLOCK_NUM_CARD_SLICES+1];
+	int cardidx = -1,host_id = -1;
+	struct sliced_card *sliced_card = NULL;
+#else
+	int devidx[1];
+#endif
+	int i, ret;
+	int initialized = 0;
+	sector_t card_capacitiy;
 
 	md = kzalloc(sizeof(struct mmc_blk_data), GFP_KERNEL);
 	if (!md) {
@@ -592,18 +748,82 @@ static struct mmc_blk_data *mmc_blk_alloc(struct mmc_card *card)
 		goto out;
 	}
 
+	if (!mmc_card_sd(card) && mmc_card_blockaddr(card)) {
+		/*
+		 * The EXT_CSD sector count is in number or 512 byte
+		 * sectors.
+		 */
+		card_capacitiy = card->ext_csd.sectors;
+	} else {
+		/*
+		 * The CSD capacity field is in units of read_blkbits.
+		 * set_capacity takes units of 512 bytes.
+		 */
+		card_capacitiy = card->csd.capacity << (card->csd.read_blkbits - 9);
+	}
+	
+	memset(md, 0, sizeof(struct mmc_blk_data));	
+	
+#ifdef CONFIG_MMC_BLOCK_CARD_SPLIT
+	ret = sscanf(mmc_card_id(card), "mmc%d:%04x", &host_id, &cardidx);
+//printk("ret: %d, hostid: %d, cardidx: %d\n", ret, host_id, cardidx);	
+	if (ret == 2 && num_sliced_cards > 0 && cardidx >= -1) {
+		sector_t tmp;
+		for (i=0; i<num_sliced_cards; i++) {
+			if (sliced_cards[i].host_id == host_id &&
+			    sliced_cards[i].dev_id == cardidx) {
+				sliced_card = &sliced_cards[i];
+				md->num_disks = sliced_card->num_slices;	
+				break;
+			}
+		}
+		
+		tmp = 0;
+		for (i=0; i<md->num_disks; i++) {	
+			md->disk_num_sects[i] = (sector_t)((sliced_card->size[i] + 511) >> 9);
+			md->disk_start[i] = tmp;
+			tmp += md->disk_num_sects[i];
+		}
+	
+		if (tmp > card_capacitiy) {
+			ret = -EINVAL;
+			goto err_kfree;
+		} else if (card_capacitiy - tmp > 0) {
+			md->disk_num_sects[md->num_disks] = card_capacitiy - tmp;
+			md->disk_start[md->num_disks] = tmp;
+			md->num_disks++;
+		}
+	} else 
+#endif 
+	{
+		md->num_disks = 1;
+		md->disk_num_sects[0] = card_capacitiy;
+		md->disk_start[0] = 0;
+	}
+	
+	for (i=0; i<md->num_disks; i++) {	
+		devidx[i] = find_first_zero_bit(dev_use, max_devices);
+		if (devidx[i] >= max_devices) {
+			ret = -ENOSPC;
+			goto err_kfree;
+		}
+		__set_bit(devidx[i], dev_use);
+
+		md->disk[i] = alloc_disk(perdev_minors);
+		if (md->disk[i] == NULL) {
+			ret = -ENOMEM;
+			goto err_putdisk;
+		}
+		
+		initialized++;
+	}
+	
 
 	/*
 	 * Set the read-only status based on the supported commands
 	 * and the write protect switch.
 	 */
 	md->read_only = mmc_blk_readonly(card);
-
-	md->disk = alloc_disk(perdev_minors);
-	if (md->disk == NULL) {
-		ret = -ENOMEM;
-		goto err_kfree;
-	}
 
 	spin_lock_init(&md->lock);
 	md->usage = 1;
@@ -615,48 +835,39 @@ static struct mmc_blk_data *mmc_blk_alloc(struct mmc_card *card)
 	md->queue.issue_fn = mmc_blk_issue_rq;
 	md->queue.data = md;
 
-	md->disk->major	= MMC_BLOCK_MAJOR;
-	md->disk->first_minor = devidx * perdev_minors;
-	md->disk->fops = &mmc_bdops;
-	md->disk->private_data = md;
-	md->disk->queue = md->queue.queue;
-	md->disk->driverfs_dev = &card->dev;
-
-	/*
-	 * As discussed on lkml, GENHD_FL_REMOVABLE should:
-	 *
-	 * - be set for removable media with permanent block devices
-	 * - be unset for removable block devices with permanent media
-	 *
-	 * Since MMC block devices clearly fall under the second
-	 * case, we do not set GENHD_FL_REMOVABLE.  Userspace
-	 * should use the block device creation/destruction hotplug
-	 * messages to tell when the card is present.
-	 */
-
-	snprintf(md->disk->disk_name, sizeof(md->disk->disk_name),
-		"mmcblk%d", devidx);
-
 	blk_queue_logical_block_size(md->queue.queue, 512);
 
-	if (!mmc_card_sd(card) && mmc_card_blockaddr(card)) {
+	for (i = 0; i < initialized; i++) {
+		md->disk[i]->major	= MMC_BLOCK_MAJOR;
+		md->disk[i]->first_minor = devidx[i] * perdev_minors;
+		md->disk[i]->fops = &mmc_bdops;
+		md->disk[i]->private_data = md;
+		md->disk[i]->queue = md->queue.queue;
+		md->disk[i]->driverfs_dev = &card->dev;
+
 		/*
-		 * The EXT_CSD sector count is in number or 512 byte
-		 * sectors.
+		 * As discussed on lkml, GENHD_FL_REMOVABLE should:
+		 *
+		 * - be set for removable media with permanent block devices
+		 * - be unset for removable block devices with permanent media
+		 *
+		 * Since MMC block devices clearly fall under the second
+		 * case, we do not set GENHD_FL_REMOVABLE.  Userspace
+		 * should use the block device creation/destruction hotplug
+		 * messages to tell when the card is present.
 		 */
-		set_capacity(md->disk, card->ext_csd.sectors);
-	} else {
-		/*
-		 * The CSD capacity field is in units of read_blkbits.
-		 * set_capacity takes units of 512 bytes.
-		 */
-		set_capacity(md->disk,
-			card->csd.capacity << (card->csd.read_blkbits - 9));
+
+		snprintf(md->disk[i]->disk_name,
+			sizeof(md->disk[i]->disk_name),
+			"mmcblk%d", devidx[i]);
+		set_capacity(md->disk[i], md->disk_num_sects[i]);
 	}
+
 	return md;
 
  err_putdisk:
-	put_disk(md->disk);
+	for (i=initialized-1; initialized>=0; i--) 
+		put_disk(md->disk[i]);
  err_kfree:
 	kfree(md);
  out:
@@ -674,7 +885,7 @@ mmc_blk_set_blksize(struct mmc_blk_data *md, struct mmc_card *card)
 
 	if (err) {
 		printk(KERN_ERR "%s: unable to set block size to 512: %d\n",
-			md->disk->disk_name, err);
+			md->disk[0]->disk_name, err);
 		return -EINVAL;
 	}
 
@@ -684,7 +895,7 @@ mmc_blk_set_blksize(struct mmc_blk_data *md, struct mmc_card *card)
 static int mmc_blk_probe(struct mmc_card *card)
 {
 	struct mmc_blk_data *md;
-	int err;
+	int i, err;
 	char cap_str[10];
 
 	/*
@@ -701,14 +912,18 @@ static int mmc_blk_probe(struct mmc_card *card)
 	if (err)
 		goto out;
 
-	string_get_size((u64)get_capacity(md->disk) << 9, STRING_UNITS_2,
+	for (i=0; i<md->num_disks; i++) {
+		string_get_size((u64)get_capacity(md->disk[i]) << 9, STRING_UNITS_2,
 			cap_str, sizeof(cap_str));
-	printk(KERN_INFO "%s: %s %s %s %s\n",
-		md->disk->disk_name, mmc_card_id(card), mmc_card_name(card),
-		cap_str, md->read_only ? "(ro)" : "");
+		printk(KERN_INFO "%s: %s %s %s %s\n",
+			md->disk[i]->disk_name, mmc_card_id(card), mmc_card_name(card),
+			cap_str, md->read_only ? "(ro)" : "");
+	}
 
 	mmc_set_drvdata(card, md);
-	add_disk(md->disk);
+	for (i=0; i<md->num_disks; i++) {
+		add_disk(md->disk[i]);
+	}
 	return 0;
 
  out:
@@ -723,8 +938,11 @@ static void mmc_blk_remove(struct mmc_card *card)
 	struct mmc_blk_data *md = mmc_get_drvdata(card);
 
 	if (md) {
-		/* Stop new requests from getting into the queue */
-		del_gendisk(md->disk);
+		int i;
+		for (i=0; i<md->num_disks; i++) {
+			/* Stop new requests from getting into the queue */
+			del_gendisk(md->disk[i]);
+		}
 
 		/* Then flush out any already in there */
 		mmc_cleanup_queue(&md->queue);
@@ -786,6 +1004,17 @@ static int __init mmc_blk_init(void)
 	res = mmc_register_driver(&mmc_driver);
 	if (res)
 		goto out2;
+
+#ifdef CONFIG_MMC_BLOCK_CARD_SPLIT
+	if (parse_split_params(sliced_cards, &num_sliced_cards, (const char*)split_params_string) < 0) {
+		printk("mmcblk: no parameter\n");
+#ifdef CONFIG_MMC_BLOCK_CARD_SPLIT_PARAMETER
+		if (parse_split_params(sliced_cards, &num_sliced_cards, split_params_default_string) < 0) {
+			printk("mmcblk: no default parameter\n");
+		}
+	} 
+#endif
+#endif	
 
 	return 0;
  out2:

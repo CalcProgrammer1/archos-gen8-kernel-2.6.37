@@ -49,6 +49,26 @@ config MMC_BLOCK_BOUNCE
 
 	  If unsure, say Y here.
 
+config MMC_BLOCK_CARD_SPLIT
+	bool "Split the mmc card in more than one block devices (slices)"
+	depends on MMC_BLOCK
+	default n
+
+	help
+	  Split the mmc card dependend from the card address in more
+	  than one blockdevice. Optional over module parameter, config file or
+	  blockdevice table in sector 0 (still not implemented).
+
+	  If unsure, say N here.
+
+config MMC_BLOCK_CARD_SPLIT_PARAMETER
+	string "description of the maps of splitted mmc cards"
+	depends on MMC_BLOCK_CARD_SPLIT
+	default ""
+	help
+	  Syntax: HOST.CARD_ADDRESS1:SIZE1[kMG],SIZE2[kMG],...,HOST.CARD_ADDRESS2:SIZE1[kMG],SIZE2[kMG],...
+	  Example: 0.0001:20M,10G,0.0002:1G,1.0003:100k,1000
+
 config SDIO_UART
 	tristate "SDIO UART/GPS class support"
 	help
