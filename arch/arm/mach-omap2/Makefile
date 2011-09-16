@@ -236,11 +236,12 @@ obj-$(CONFIG_MACH_ARCHOS_A70H2)		+= board-archos-a70h2.o \
 
 obj-$(CONFIG_MACH_ARCHOS_A101IT)	+= board-archos-a10it.o \
 					   archos-lcd-boe-wsvga10.o \
-					   archos-usb-touchscreen.o \
-					   archos-usb-ohci.o
+					   archos-usb-ohci.o \
+					   archos-usb-touchscreen.o
 
 obj-$(CONFIG_MACH_ARCHOS)		+= archos-touchscreen.o \
 					   archos-audio.o \
+					   archos-usb-musb.o \
 					   archos-wifi.o
 #					   archos-accel.o \
 					   archos-battery.o \

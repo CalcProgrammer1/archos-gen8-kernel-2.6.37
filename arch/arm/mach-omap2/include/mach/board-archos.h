@@ -556,6 +556,7 @@ extern int __init archos_leds_init(void);
 
 extern void archos_usb_ehci_init(void);
 extern void archos_usb_ohci_init(void);
+extern void archos_usb_musb_init(void);
 
 static inline int machine_has_micro_sd(void) 
 {
