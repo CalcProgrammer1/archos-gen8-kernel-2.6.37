@@ -872,6 +872,7 @@ int dsi_pll_calc_clock_div_pck(bool is_tft, unsigned long req_pck,
 
 	min_fck_per_pck = CONFIG_OMAP2_DSS_MIN_FCK_PER_PCK;
 
+	// TODO: HACK:
 	while (min_fck_per_pck &&
 		req_pck * min_fck_per_pck > DISPC_MAX_FCK) {
 		min_fck_per_pck--;
@@ -955,6 +956,7 @@ retry:
 found:
 	if (!match) {
 		if (min_fck_per_pck) {
+			// TODO: HACK:
 			min_fck_per_pck--;
 			DSSERR("Could not find suitable clock settings. "
 					"Reducing FCK/PCK constraint to %d and"
