@@ -1221,6 +1221,7 @@ static struct omap_board_mux board_mux[] __initdata = {
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
 	OMAP3_MUX(/* GPIO55_OUT */ GPMC_NCS4,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
+	// a101. USB power.
 	OMAP3_MUX(/* GPIO56_OUT */ GPMC_NCS5,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
 	OMAP3_MUX(/* GPIO57_OFF_LOW */ GPMC_NCS6,
@@ -1295,7 +1296,7 @@ static struct omap_board_mux board_mux[] __initdata = {
 	OMAP3_MUX(/* GPIO167 */ CAM_WEN,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
 #endif
-	// Audio HP power.
+	// a43. Audio HP power.
 	OMAP3_MUX(/* GPIO170 */ HDQ_SIO,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
 #if 0
@@ -1312,7 +1313,7 @@ static struct omap_board_mux board_mux[] __initdata = {
 	OMAP3_MUX(/* GPIO180 */ MCSPI2_SOMI,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
 #endif
-	// HDMI power.
+	// a43. HDMI power.
 	OMAP3_MUX(/* GPIO181 */ MCSPI2_CS0,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
 #if 0
@@ -1404,7 +1405,7 @@ static struct omap_board_mux board_mux[] __initdata = {
 #endif
 
 	/* DSI */
-	// Display.
+	// a43. Display DSI. 6 lines DSI_*
 	// init dsi bus, should be ever made in boot
 	OMAP3_MUX(/* DSI_DX0 */ DSS_DATA0,
 			OMAP_MUX_MODE1 | OMAP_PIN_INPUT),
@@ -1435,6 +1436,7 @@ static struct omap_board_mux board_mux[] __initdata = {
 	OMAP3_MUX(/* UART2_CTS */ UART2_CTS,
 			OMAP_MUX_MODE0 | OMAP_PIN_INPUT),
 
+	// a101. Supply 5V.
 	OMAP3_MUX(/* GPIO144 */ UART2_CTS,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT_PULLDOWN),
 #endif
@@ -1515,10 +1517,11 @@ static struct omap_board_mux board_mux[] __initdata = {
 			OMAP_WAKEUP_EN | OMAP_PIN_INPUT_PULLUP |
 			OMAP_MUX_MODE0),
 
-	// Touchscreen IRQ.
+	// a43. Touchscreen IRQ.
 	OMAP3_MUX(/* GPIO24 */ ETK_D10,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT ),
-	// Display reset.
+	// a43. Display reset.
+	// a101. USB Touchscreen reset.
 	OMAP3_MUX(/* GPIO25_OUT */ ETK_D11,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
 
@@ -1530,15 +1533,17 @@ static struct omap_board_mux board_mux[] __initdata = {
 #endif
 
 	/* TSC PWRON */
-	// Touchscreen power.
+	// a43. Touchscreen power.
 	OMAP3_MUX(/* GPIO179 */ MCSPI2_SIMO,
 			OMAP_MUX_MODE4  | OMAP_PIN_INPUT),
 
 #if 0
+	// a101. USB OHCI suspend.
 	OMAP3_MUX(/* GPIO27 */ ETK_D13,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
 	OMAP3_MUX(/* GPIO28 */ ETK_D14,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
+	// a101. Audio HP power.
 	OMAP3_MUX(/* GPIO22 */ ETK_D8,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
 #endif
@@ -1598,10 +1603,11 @@ static struct omap_board_mux board_mux[] __initdata = {
 			OMAP_MUX_MODE7 | OMAP_PIN_INPUT_PULLDOWN),
 #endif
 
-	// Vibrator. Unused pin.
+	// a43. Vibrator. Unused pin.
 	OMAP3_MUX(/* GPIO23 */ ETK_D9,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT_PULLDOWN),
 #if 0
+	// a101. USB Touchscreen power.
 	OMAP3_MUX(/* GPIO26 */ ETK_D12,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
 #endif
@@ -1765,13 +1771,17 @@ static struct omap_board_mux board_mux[] __initdata = {
 			OMAP_MUX_MODE3 | OMAP_PIN_OFF_OUTPUT_HIGH),
 	OMAP3_MUX(/* GPT08 */ UART2_RX,
 			OMAP_MUX_MODE2),
+	// a101. Display reset.
 	OMAP3_MUX(/* GPIO14 */ ETK_D0,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
 
+	// a101. HDMI power.
 	OMAP3_MUX(/* GPIO21 */ ETK_D7,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
+	// a101. Touchscreen power.
 	OMAP3_MUX(/* GPIO160 */ MCBSP_CLKS,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
+	// a101. Touchscreen IRQ.
 	OMAP3_MUX(/* GPIO156 */ MCBSP1_CLKR,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
 	OMAP3_MUX(/* GPIO15 */ ETK_D1,
@@ -1883,6 +1893,7 @@ static struct omap_board_mux board_mux[] __initdata = {
 	OMAP3_MUX(/* MCBSP3_FSX */ MCBSP3_FSX,
 			OMAP_MUX_MODE0 | OMAP_PIN_INPUT_PULLDOWN),
 
+	// a101. Display pci(?), blk_en(?).
 	OMAP3_MUX(/* GPIO146 */ UART2_TX,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
 #endif
@@ -1891,12 +1902,17 @@ static struct omap_board_mux board_mux[] __initdata = {
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT_PULLDOWN),
 
 #if 0
+	// OHCI muxes are set up in usb-ehci.c
+	// a101. USB OHCI.
 	OMAP3_MUX(/* USB2FS_RCV */ ETK_D14,
 			OMAP_MUX_MODE5 | OMAP_PIN_INPUT),
+	// a101. USB OHCI.
 	OMAP3_MUX(/* USB2FS_VM */ ETK_D15,
 			OMAP_MUX_MODE5 | OMAP_PIN_INPUT),
+	// a101. USB OHCI.
 	OMAP3_MUX(/* USB2FS_VP */ MCSPI1_CS3,
 			OMAP_MUX_MODE5 | OMAP_PIN_INPUT),
+	// a101. USB OHCI.
 	OMAP3_MUX(/* USB2FS_EN */ MCSPI2_CS1,
 			OMAP_MUX_MODE5 | OMAP_PIN_INPUT),
 #endif
@@ -2214,14 +2230,6 @@ static void init_unused(void)
 extern int __init archos_clocks_init(struct archos_clocks *clocks);
 #endif  
 
-static struct omap_musb_board_data musb_board_data = {
-        .interface_type         = MUSB_INTERFACE_ULPI,
-        .mode                   = MUSB_OTG,
-	.power			= 50,			/* up to 100 mA */
-	// TODO: it can supply 500mA?
-        //.power                  = 250,			/* up to 500 mA */
-};
-
 static void __init board_init(void)
 {
 	int num_displays = 0;
@@ -2265,7 +2273,8 @@ static void __init board_init(void)
 
 	msecure_init();
 	omap_serial_init();
-	usb_musb_init(&musb_board_data);
+	// TODO: it can supply 500mA?
+	archos_usb_musb_init();
 
 	//archos_accel_init(&board_mma7660fc_pdata);
 

@@ -109,6 +109,7 @@ static int __init archos_usb_tsp_init(void)
 	
 	conf = &(usb_tsp_config->rev[hardware_rev]);
 	
+	// TODO: pass only those are needed. Edit HID driver to use them.
 	tsp_platform_data.flags = conf->suspend_flags;
 	tsp_platform_data.x_scale = conf->x_scale;
 	tsp_platform_data.x_offset = conf->x_offset;
