@@ -51,4 +51,10 @@ config PANEL_LG_4573
         help
           LCD Panel used on Archos A43
 
+config PANEL_BOE_HT101
+	tristate "BOE HT101WSB LCD Panel"
+	depends on OMAP2_DSS
+	help
+	  LCD Panel used on Archos A10it
+
 endmenu

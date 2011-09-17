@@ -7,3 +7,4 @@ obj-$(CONFIG_PANEL_TOPPOLY_TDO35S) += panel-toppoly-tdo35s.o
 obj-$(CONFIG_PANEL_TPO_TD043MTEA1) += panel-tpo-td043mtea1.o
 obj-$(CONFIG_PANEL_ACX565AKM) += panel-acx565akm.o
 obj-$(CONFIG_PANEL_LG_4573) += panel-lg-4573.o
+obj-$(CONFIG_PANEL_BOE_HT101) += panel-boe-ht101wsb.o

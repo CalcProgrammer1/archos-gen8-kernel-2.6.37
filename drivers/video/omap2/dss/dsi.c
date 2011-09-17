@@ -872,12 +872,13 @@ int dsi_pll_calc_clock_div_pck(bool is_tft, unsigned long req_pck,
 
 	min_fck_per_pck = CONFIG_OMAP2_DSS_MIN_FCK_PER_PCK;
 
-	if (min_fck_per_pck &&
+	while (min_fck_per_pck &&
 		req_pck * min_fck_per_pck > DISPC_MAX_FCK) {
-		DSSERR("Requested pixel clock not possible with the current "
-				"OMAP2_DSS_MIN_FCK_PER_PCK setting. Turning "
-				"the constraint off.\n");
-		min_fck_per_pck = 0;
+		min_fck_per_pck--;
+		DSSDBG("Requested pixel clock not possible with the current "
+				"OMAP2_DSS_MIN_FCK_PER_PCK setting. "
+				"Reducing FCK/PCK constraint to %d and "
+				"trying again.\n", min_fck_per_pck );
 	}
 
 	DSSDBG("dsi_pll_calc\n");
@@ -954,10 +955,10 @@ retry:
 found:
 	if (!match) {
 		if (min_fck_per_pck) {
-			DSSERR("Could not find suitable clock settings.\n"
-					"Turning FCK/PCK constraint off and"
-					"trying again.\n");
-			min_fck_per_pck = 0;
+			min_fck_per_pck--;
+			DSSERR("Could not find suitable clock settings. "
+					"Reducing FCK/PCK constraint to %d and"
+					"trying again.\n", min_fck_per_pck );
 			goto retry;
 		}
 
