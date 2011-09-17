@@ -66,7 +66,6 @@ static struct omap_dss_device boe_wsvga_10_panel = {
 	.name = "lcd",
 	.driver_name = "boe_wsvga_10",
 	.phy.dpi.data_lines = 18,
-	//.phy.dpi.dither = OMAP_DSS_DITHER_SPATIAL,
 	.platform_enable = panel_enable,
 	.platform_disable = panel_disable,
 };

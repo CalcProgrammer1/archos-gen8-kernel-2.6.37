@@ -138,7 +138,6 @@ static int panel_probe(struct omap_dss_device *disp)
 {
 	disp->panel.config = OMAP_DSS_LCD_TFT | OMAP_DSS_LCD_IVS |
 		OMAP_DSS_LCD_IHS | OMAP_DSS_LCD_RF | OMAP_DSS_LCD_ONOFF,
-//	disp->panel.config = OMAP_DSS_LCD_TFT;
 	disp->panel.timings = boe_panel_timings;
 
 	return 0;
@@ -188,10 +187,7 @@ static struct omap_dss_driver boe_panel = {
 
 static int __init panel_drv_init(void)
 {
-//	printk( "panel boe wsvga 10 init\n");
-
 	return omap_dss_register_driver(&boe_panel);
-//	return 0;
 }
 
 static void __exit panel_drv_exit(void)
