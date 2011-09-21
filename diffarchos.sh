@@ -15,6 +15,7 @@ fi
 {
 	for file in \
 	 arch/arm/mach-omap2/archos-audio.c                \
+	 arch/arm/mach-omap2/archos-battery.c              \
 	 arch/arm/mach-omap2/archos-clock.c                \
 	 arch/arm/mach-omap2/archos-lcd-boe-wsvga10.c      \
 	 arch/arm/mach-omap2/archos-lcd-lg-fwvga43.c       \

@@ -1549,16 +1549,17 @@ static struct omap_board_mux board_mux[] __initdata = {
 	OMAP3_MUX(/* GPIO179 */ MCSPI2_SIMO,
 			OMAP_MUX_MODE4  | OMAP_PIN_INPUT),
 
-#if 0
+	// a43. Charge power.
 	// a101. USB OHCI suspend.
 	OMAP3_MUX(/* GPIO27 */ ETK_D13,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
+	// a43. Charge high.
 	OMAP3_MUX(/* GPIO28 */ ETK_D14,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
+	// a43. Charge low.
 	// a101. Audio HP power.
 	OMAP3_MUX(/* GPIO22 */ ETK_D8,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
-#endif
 	// Audio HP detect.
 	OMAP3_MUX(/* GPIO109 */ CAM_D10,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),

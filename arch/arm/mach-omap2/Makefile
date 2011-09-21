@@ -241,10 +241,10 @@ obj-$(CONFIG_MACH_ARCHOS_A101IT)	+= board-archos-a10it.o \
 
 obj-$(CONFIG_MACH_ARCHOS)		+= archos-touchscreen.o \
 					   archos-audio.o \
+					   archos-battery.o \
 					   archos-usb-musb.o \
 					   archos-wifi.o
 #					   archos-accel.o \
-					   archos-battery.o \
 					   archos-camera-ov7675.o \
 					   archos-die_id.o \
 					   archos-keys.o \

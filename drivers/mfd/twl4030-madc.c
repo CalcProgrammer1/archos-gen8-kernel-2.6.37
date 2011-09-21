@@ -355,8 +355,10 @@ static int twl4030_madc_set_current_generator(struct twl4030_madc_data *madc,
 	if (chan > 1)
 		return EINVAL;
 
+	// Hack up TPS65921 case.
+	// TODO: HACK:
 	ret = twl_i2c_read_u8(TWL4030_MODULE_MAIN_CHARGE,
-				  &regval, TWL4030_BCI_BCICTL1);
+				  &regval, 0x04);//TWL4030_BCI_BCICTL1);
 	if (ret) {
 		dev_dbg(madc->dev, "unable to read register 0x%X\n",
 				TWL4030_BCI_BCICTL1);
@@ -364,15 +366,15 @@ static int twl4030_madc_set_current_generator(struct twl4030_madc_data *madc,
 	}
 
 	if (on) {
-		regval |= (chan) ? TWL4030_BCI_ITHEN : TWL4030_BCI_TYPEN;
-		regval |= TWL4030_BCI_MESBAT;
+		//regval |= (chan) ? TWL4030_BCI_ITHEN : TWL4030_BCI_TYPEN;
+		regval = 1; //TWL4030_BCI_MESBAT;
 	} else {
-		regval &= (chan) ? ~TWL4030_BCI_ITHEN : ~TWL4030_BCI_TYPEN;
-		regval &= ~TWL4030_BCI_MESBAT;
+		//regval &= (chan) ? ~TWL4030_BCI_ITHEN : ~TWL4030_BCI_TYPEN;
+		regval = 0; //~TWL4030_BCI_MESBAT;
 	}
 
 	ret = twl_i2c_write_u8(TWL4030_MODULE_MAIN_CHARGE,
-				   regval, TWL4030_BCI_BCICTL1);
+				   regval, 0x04);//TWL4030_BCI_BCICTL1);
 	if (ret) {
 		dev_dbg(madc->dev, "unable to write register 0x%X\n",
 				TWL4030_BCI_BCICTL1);
