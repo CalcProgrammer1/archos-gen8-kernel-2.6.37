@@ -547,6 +547,7 @@ static int __init archos_battery_probe(struct platform_device *pdev)
 			bat->charge_low = chg_cfg->rev[hardware_rev].charge_low;
 
 			archos_gpio_init_output(&bat->charge_enable, "charge enable");
+			gpio_set_value_cansleep(GPIO_PIN(bat->charge_enable), 1);
 			archos_gpio_init_output(&bat->charge_low, "charge low");
 
 			if (GPIO_EXISTS(chg_cfg->rev[hardware_rev].charge_high)) {
