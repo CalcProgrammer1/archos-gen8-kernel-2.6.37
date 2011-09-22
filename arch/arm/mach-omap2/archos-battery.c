@@ -20,8 +20,8 @@
 #ifdef CONFIG_POWER_SUPPLY
 /* power supply abstraction for built-in battery */
 
-#define BATTERY_MIN_VOLTAGE	3300
-#define BATTERY_MAX_VOLTAGE	4200
+#define BATTERY_MIN_VOLTAGE	3400
+#define BATTERY_MAX_VOLTAGE	4100
 
 struct archos_battery 
 {
