@@ -119,7 +119,11 @@ struct omap_pwm_led_platform_data {
 	int intensity_timer;
 	int blink_timer;
 	void (*set_power)(struct omap_pwm_led_platform_data *self, int on_off);
+	unsigned int bkl_freq;
+	unsigned char bkl_max;
+	unsigned invert:1;
 };
+
 
 struct omap_uart_config {
 	/* Bit field of UARTs present; bit 0 --> UART1 */

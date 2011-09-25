@@ -19,6 +19,7 @@ fi
 	 arch/arm/mach-omap2/archos-clock.c                \
 	 arch/arm/mach-omap2/archos-lcd-boe-wsvga10.c      \
 	 arch/arm/mach-omap2/archos-lcd-lg-fwvga43.c       \
+	 arch/arm/mach-omap2/archos-leds.c                 \
 	 arch/arm/mach-omap2/archos-touchscreen.c          \
 	 arch/arm/mach-omap2/archos-usb-musb.c             \
 	 arch/arm/mach-omap2/archos-usb-ohci.c             \
@@ -41,6 +42,8 @@ fi
 	do
 		$DIFF $ORIG/${file/mach-omap2/plat-omap} $NEW/$file
 	done
+
+	$DIFF $ORIG/drivers/leds/leds-omap-pwm.c $NEW/drivers/video/backlight/omap_pwm_bl.c
 } | $PAGER
 
 

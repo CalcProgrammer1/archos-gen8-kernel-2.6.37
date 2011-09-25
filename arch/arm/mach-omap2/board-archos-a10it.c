@@ -1418,8 +1418,11 @@ static struct omap_board_mux board_mux[] __initdata = {
 #if 0
 	OMAP3_MUX(/* GPIO57_OFF_LOW */ GPMC_NCS6,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT | OMAP_PIN_OFF_OUTPUT_LOW),
+#endif
+	// a101. Power LED.
 	OMAP3_MUX(/* GPIO57 */ GPMC_NCS6,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT | OMAP_PIN_OFF_OUTPUT_HIGH),
+#if 0
 	OMAP3_MUX(/* GPIO58_OUT */ GPMC_NCS7,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
 	OMAP3_MUX(/* GPIO59_DOWN */ GPMC_CLK,
@@ -1793,10 +1796,11 @@ static struct omap_board_mux board_mux[] __initdata = {
 	OMAP3_MUX(/* SAFE_PULLDOWN */ MCBSP1_CLKX,
 			OMAP_MUX_MODE7 | OMAP_PIN_INPUT_PULLDOWN),
 
+#endif
 	// a43. Vibrator. Unused pin.
+	// a101. Backlight LED power.
 	OMAP3_MUX(/* GPIO23 */ ETK_D9,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT_PULLDOWN),
-#endif
 	// a101. USB Touchscreen power.
 	OMAP3_MUX(/* GPIO26 */ ETK_D12,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
@@ -1958,9 +1962,10 @@ static struct omap_board_mux board_mux[] __initdata = {
 			OMAP_MUX_MODE3),
 	OMAP3_MUX(/* GPT08_OFF_HIGH */ GPMC_NCS7,
 			OMAP_MUX_MODE3 | OMAP_PIN_OFF_OUTPUT_HIGH),
+#endif
+	// a101. Backlight LED PWM.
 	OMAP3_MUX(/* GPT08 */ UART2_RX,
 			OMAP_MUX_MODE2),
-#endif
 	// a101. Display reset.
 	OMAP3_MUX(/* GPIO14 */ ETK_D0,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
@@ -2494,7 +2499,7 @@ static void __init board_init(void)
 	archos_audio_gpio_init();
 
 	//archos_camera_ov7675_init();
-	//archos_leds_init();
+	archos_leds_init();
 }
 
 MACHINE_START(ARCHOS_A101IT, "Archos A101IT board")

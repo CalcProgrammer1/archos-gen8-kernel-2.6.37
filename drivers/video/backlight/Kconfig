@@ -222,6 +222,13 @@ config BACKLIGHT_PWM
 	  If you have a LCD backlight adjustable by PWM, say Y to enable
 	  this driver.
 
+config BACKLIGHT_OMAP_PWM
+	tristate "OMAP PWM-controlled Backlight Driver"
+	depends on ARCH_OMAP && OMAP_DM_TIMER
+	help
+	  This option enables support for LCD backlights connected to GPIO lines
+	  controlled by a PWM timer on OMAP CPUs.
+
 config BACKLIGHT_DA903X
 	tristate "Backlight Driver for DA9030/DA9034 using WLED"
 	depends on PMIC_DA903X

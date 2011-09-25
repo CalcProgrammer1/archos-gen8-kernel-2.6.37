@@ -1236,8 +1236,11 @@ static struct omap_board_mux board_mux[] __initdata = {
 	// a101. USB power.
 	OMAP3_MUX(/* GPIO56_OUT */ GPMC_NCS5,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT),
+#endif
+	// a43. Power LED.
 	OMAP3_MUX(/* GPIO57_OFF_LOW */ GPMC_NCS6,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT | OMAP_PIN_OFF_OUTPUT_LOW),
+#if 0
 	OMAP3_MUX(/* GPIO57 */ GPMC_NCS6,
 			OMAP_MUX_MODE4 | OMAP_PIN_OUTPUT | OMAP_PIN_OFF_OUTPUT_HIGH),
 	OMAP3_MUX(/* GPIO58_OUT */ GPMC_NCS7,
@@ -1537,9 +1540,10 @@ static struct omap_board_mux board_mux[] __initdata = {
 	OMAP3_MUX(/* GPIO25_OUT */ ETK_D11,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
 
-#if 0
+	// a43. Backlight LED PWM.
 	OMAP3_MUX(/* GPT08 */ MCSPI2_CS1,
 			OMAP_MUX_MODE1 ),
+#if 0
 	OMAP3_MUX(/* GPIO178 */ MCSPI2_CLK,
 			OMAP_MUX_MODE4 | OMAP_PIN_INPUT),
 #endif
@@ -2305,7 +2309,7 @@ static void __init board_init(void)
 	archos_audio_gpio_init();
 
 	//archos_camera_mt9d113_init();
-	//archos_leds_init();
+	archos_leds_init();
 	//archos_compass_init();
 }
 
