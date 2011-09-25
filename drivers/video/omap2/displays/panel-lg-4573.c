@@ -517,18 +517,18 @@ static void panel_initial_settings(void)
 	gamma_settings();
 }
 
-static int panel_sleep(int enable)
+static int panel_sleep(int sleep)
 {
 	u8 cmd;
 
-	printk("panel_sleep(%i)\n", enable);
+	printk("panel_sleep(%i)\n", sleep);
 	
-	if (enable) {
-		cmd = LG_UCS_DISPOFF;
+	if (sleep) {
+		cmd = LG_UCS_SLPIN;
 		dsi_vc_dcs_write_nosync(TCH, &cmd, 1);
 		msleep(500);
 
-		cmd = LG_UCS_SLPIN;
+		cmd = LG_UCS_DISPOFF;
 		dsi_vc_dcs_write_nosync(TCH, &cmd, 1);
 		msleep(500);
 	} else {
@@ -679,8 +679,10 @@ static int taal_suspend(struct omap_dss_device *dssdev)
 	}
 
 	dsi_bus_lock();
-	// TODO: fix suspend/resume.
+	// TODO: fix suspend/resume, seems like sleep-in and DISPOFF don't work.
 	//r = panel_sleep(1);
+	if (dssdev->state == OMAP_DSS_DISPLAY_ACTIVE)
+		taal_power_off(dssdev);
 	r = 0;
 	dsi_bus_unlock();
 
@@ -706,9 +708,8 @@ static int taal_resume(struct omap_dss_device *dssdev)
 	}
 
 	dsi_bus_lock();
-	//panel_initial_settings();
 	//r = panel_sleep(0);
-	r = 0;
+	r = taal_power_on(dssdev);
 	dsi_bus_unlock();
 
 	if (r)
