@@ -471,7 +471,7 @@ static struct miscdevice twl4030_madc_device = {
 	.fops = &twl4030_madc_fileops
 };
 
-static int __init twl4030_madc_probe(struct platform_device *pdev)
+static int __devinit twl4030_madc_probe(struct platform_device *pdev)
 {
 	struct twl4030_madc_data *madc;
 	struct twl4030_madc_platform_data *pdata = pdev->dev.platform_data;
