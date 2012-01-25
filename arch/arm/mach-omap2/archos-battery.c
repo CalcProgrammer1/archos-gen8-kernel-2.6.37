@@ -616,7 +616,7 @@ static int __init archos_battery_probe(struct platform_device *pdev)
 }
 
 static struct platform_driver archos_battery_driver = {
-	.probe = archos_battery_probe,
+//	.probe __initdata = archos_battery_probe,
 	.driver = {
 		.name = "battery",
 	},
@@ -637,7 +637,7 @@ static int __init archos_battery_driver_init(void)
 		printk(KERN_INFO "%s: failed to register battery device\n", __FUNCTION__);
 		return ret;
 	}
-	ret = platform_driver_register(&archos_battery_driver);
+	ret = platform_driver_probe(&archos_battery_driver, archos_battery_probe);
 	if (ret < 0) {
 		printk(KERN_INFO "%s: failed to register battery driver\n", __FUNCTION__);
 		return ret;
