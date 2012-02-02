@@ -1,5 +1,7 @@
 /*
- * Taal DSI command mode panel
+ * LG 4573 DSI panel
+ *
+ * Modified by Adam Honse (CalcProgrammer1), Feb 1 2012
  *
  * Copyright (C) 2009 Nokia Corporation
  * Author: Tomi Valkeinen <tomi.valkeinen@nokia.com>
@@ -36,10 +38,7 @@
 /* DSI Virtual channel. Hardcoded for now. */
 #define TCH 0
 
-#define TAAL_ESD_CHECK_PERIOD	msecs_to_jiffies(5000)
-
 #define GAMMA_ADJUST	1
-
 
 // USER COMMAND SET
 
@@ -96,6 +95,7 @@
 #define LG_MCS_OTP2		0xf9
 #define LG_MCS_OTP3		0xfa
 
+#define DW(x...) dsi_vc_dcs_write_nosync(TCH, (u8[]){x}, sizeof((u8[]){x}))
 
 // HACK: it's needed to enable video mode.
 extern void dispc_enable_channel(enum omap_channel channel, bool enable);
@@ -137,7 +137,7 @@ static struct panel_config lg_config = {
 	},
 };
 
-struct taal_data {
+struct panel_data {
 	struct mutex lock;
 
 	unsigned long	hw_guard_end;	/* next value of jiffies when we can
@@ -147,111 +147,27 @@ struct taal_data {
 
 	struct omap_dss_device *dssdev;
 
-	bool enabled;
-	bool mirror;
+	bool 		enabled;
+	u8 		rotate;
+	bool		mirror;
 
-	//bool cabc_broken;
-	//unsigned cabc_mode;
-
+	bool		cabc_broken;
+	unsigned	cabc_mode;
 	struct panel_config *panel_config;
 };
 
-
-// TODO: rework to taal-like code organization.
-#if 0
-static void hw_guard_start(struct taal_data *td, int guard_msec)
-{
-	td->hw_guard_wait = msecs_to_jiffies(guard_msec);
-	td->hw_guard_end = jiffies + td->hw_guard_wait;
-}
-
-static void hw_guard_wait(struct taal_data *td)
-{
-	unsigned long wait = td->hw_guard_end - jiffies;
-
-	if ((long)wait > 0 && wait <= td->hw_guard_wait) {
-		set_current_state(TASK_UNINTERRUPTIBLE);
-		schedule_timeout(wait);
-	}
-}
-
-static int taal_sleep_in(struct taal_data *td)
-
-{
-	u8 cmd;
-	int r;
-
-	hw_guard_wait(td);
-
-	cmd = DCS_SLEEP_IN;
-	r = dsi_vc_dcs_write_nosync(TCH, &cmd, 1);
-	if (r)
-		return r;
-
-	hw_guard_start(td, 120);
-
-	if (td->panel_config->sleep.sleep_in)
-		msleep(td->panel_config->sleep.sleep_in);
-
-	return 0;
-}
-
-static int taal_sleep_out(struct taal_data *td)
-{
-	int r;
-
-	hw_guard_wait(td);
-
-	r = taal_dcs_write_0(DCS_SLEEP_OUT);
-	if (r)
-		return r;
-
-	hw_guard_start(td, 120);
-
-	if (td->panel_config->sleep.sleep_out)
-		msleep(td->panel_config->sleep.sleep_out);
-
-	return 0;
-}
-
-static int taal_get_id(u8 *id1, u8 *id2, u8 *id3)
-{
-	int r;
-
-	r = taal_dcs_read_1(DCS_GET_ID1, id1);
-	if (r)
-		return r;
-	r = taal_dcs_read_1(DCS_GET_ID2, id2);
-	if (r)
-		return r;
-	r = taal_dcs_read_1(DCS_GET_ID3, id3);
-	if (r)
-		return r;
-
-	return 0;
-}
-
-static int taal_set_addr_mode(u8 rotate, bool mirror)
-{
-	return 0;
-}
-#endif
-
-static void taal_get_timings(struct omap_dss_device *dssdev,
-			struct omap_video_timings *timings)
+static void panel_get_timings(struct omap_dss_device *dssdev, struct omap_video_timings *timings)
 {
 	*timings = dssdev->panel.timings;
 }
 
-static void taal_get_resolution(struct omap_dss_device *dssdev,
-		u16 *xres, u16 *yres)
+static void panel_get_resolution(struct omap_dss_device *dssdev, u16 *xres, u16 *yres)
 {
 	*xres = dssdev->panel.timings.x_res;
 	*yres = dssdev->panel.timings.y_res;
 }
-
 // TODO: this display has CABC too.
-#if 0
+
 static const char *cabc_modes[] = {
 	"off",		/* used also always when CABC is not supported */
 	"ui",
@@ -259,48 +175,42 @@ static const char *cabc_modes[] = {
 	"moving-image",
 };
 
-static ssize_t show_cabc_mode(struct device *dev,
-		struct device_attribute *attr,
-		char *buf)
+static ssize_t show_cabc_mode(struct device *dev, struct device_attribute *attr, char *buf)
 {
 	struct omap_dss_device *dssdev = to_dss_device(dev);
-	struct taal_data *td = dev_get_drvdata(&dssdev->dev);
+	struct panel_data *td = dev_get_drvdata(&dssdev->dev);
 	const char *mode_str;
 	int mode;
 	int len;
-
+	pr_debug("show_cabc_mode\n");
 	mode = td->cabc_mode;
 
 	mode_str = "unknown";
-	if (mode >= 0 && mode < ARRAY_SIZE(cabc_modes))
-		mode_str = cabc_modes[mode];
+	if (mode >= 0 && mode < ARRAY_SIZE(cabc_modes)) mode_str = cabc_modes[mode];
 	len = snprintf(buf, PAGE_SIZE, "%s\n", mode_str);
 
 	return len < PAGE_SIZE - 1 ? len : PAGE_SIZE - 1;
 }
 
-static ssize_t store_cabc_mode(struct device *dev,
-		struct device_attribute *attr,
-		const char *buf, size_t count)
+static ssize_t store_cabc_mode(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
 {
 	struct omap_dss_device *dssdev = to_dss_device(dev);
-	struct taal_data *td = dev_get_drvdata(&dssdev->dev);
+	struct panel_data *td = dev_get_drvdata(&dssdev->dev);
 	int i;
-
-	for (i = 0; i < ARRAY_SIZE(cabc_modes); i++) {
-		if (sysfs_streq(cabc_modes[i], buf))
-			break;
+	pr_debug("store_cabc_mode\n");
+	for (i = 0; i < ARRAY_SIZE(cabc_modes); i++)
+	{
+		if (sysfs_streq(cabc_modes[i], buf)) break;
 	}
 
-	if (i == ARRAY_SIZE(cabc_modes))
-		return -EINVAL;
+	if (i == ARRAY_SIZE(cabc_modes)) return -EINVAL;
 
 	mutex_lock(&td->lock);
 
-	if (td->enabled) {
+	if (td->enabled)
+	{
 		dsi_bus_lock();
-		if (!td->cabc_broken)
-			taal_dcs_write_1(DCS_WRITE_CABC, i);
+		if (!td->cabc_broken) DW(LG_UCS_WRCABC, i);
 		dsi_bus_unlock();
 	}
 
@@ -311,58 +221,52 @@ static ssize_t store_cabc_mode(struct device *dev,
 	return count;
 }
 
-static ssize_t show_cabc_available_modes(struct device *dev,
-		struct device_attribute *attr,
-		char *buf)
+static ssize_t show_cabc_available_modes(struct device *dev, struct device_attribute *attr, char *buf)
 {
 	int len;
 	int i;
-
-	for (i = 0, len = 0;
-	     len < PAGE_SIZE && i < ARRAY_SIZE(cabc_modes); i++)
-		len += snprintf(&buf[len], PAGE_SIZE - len, "%s%s%s",
-			i ? " " : "", cabc_modes[i],
-			i == ARRAY_SIZE(cabc_modes) - 1 ? "\n" : "");
+	pr_debug("show_cabc_available_modes\n");
+	for (i = 0, len = 0; len < PAGE_SIZE && i < ARRAY_SIZE(cabc_modes); i++)
+	{
+		len += snprintf(&buf[len], PAGE_SIZE - len, "%s%s%s", i ? " " : "", cabc_modes[i], i == ARRAY_SIZE(cabc_modes) - 1 ? "\n" : "");
+	}
 
 	return len < PAGE_SIZE ? len : PAGE_SIZE - 1;
 }
 
-static DEVICE_ATTR(cabc_mode, S_IRUGO | S_IWUSR,
-		show_cabc_mode, store_cabc_mode);
-static DEVICE_ATTR(cabc_available_modes, S_IRUGO,
-		show_cabc_available_modes, NULL);
+static DEVICE_ATTR(cabc_mode, S_IRUGO | S_IWUSR, show_cabc_mode, store_cabc_mode);
+static DEVICE_ATTR(cabc_available_modes, S_IRUGO, show_cabc_available_modes, NULL);
 
-static struct attribute *taal_attrs[] = {
+static struct attribute *panel_attrs[] = {
 	&dev_attr_cabc_mode.attr,
 	&dev_attr_cabc_available_modes.attr,
 	NULL,
 };
 
-static struct attribute_group taal_attr_group = {
-	.attrs = taal_attrs,
+static struct attribute_group panel_attr_group = {
+	.attrs = panel_attrs,
 };
-#endif
 
-static void taal_sw_reset(struct omap_dss_device *dssdev)
+static void panel_sw_reset(struct omap_dss_device *dssdev)
 {
 	u8 cmd;
-
+	pr_debug("panel_sw_reset\n");
 	cmd = LG_UCS_SWRESET;
 	dsi_vc_dcs_write_nosync(TCH, &cmd, 1);
 	msleep(10);	// min 5ms; in sleep-out min 120ms to next SLPOUT
 }
 
-static int taal_probe(struct omap_dss_device *dssdev)
+static int panel_probe(struct omap_dss_device *dssdev)
 {
-	struct taal_data *td;
+	struct panel_data *td;
 	int r, i;
-
+	pr_debug("panel_probe\n");
 	dev_dbg(&dssdev->dev, "probe\n");
 
 	td = kzalloc(sizeof(*td), GFP_KERNEL);
-	if (!td) {
-		r = -ENOMEM;
-		goto err;
+	if (!td)
+	{
+		return -ENOMEM;
 	}
 	td->dssdev = dssdev;
 	td->panel_config = &lg_config;
@@ -373,38 +277,23 @@ static int taal_probe(struct omap_dss_device *dssdev)
 
 	dssdev->caps = OMAP_DSS_DISPLAY_CAP_VIDEO_MODE;
 
-	//taal_hw_reset(dssdev);
-
-	/*
-	r = sysfs_create_group(&dssdev->dev.kobj, &taal_attr_group);
-	if (r) {
-		dev_err(&dssdev->dev, "failed to create sysfs files\n");
-		goto err_sysfs;
-	}
-	*/
-
 	return 0;
-//err_sysfs:
 	kfree(td);
-err:
-	return r;
 }
 
-static void taal_remove(struct omap_dss_device *dssdev)
+static void panel_remove(struct omap_dss_device *dssdev)
 {
-	struct taal_data *td = dev_get_drvdata(&dssdev->dev);
+	struct panel_data *td = dev_get_drvdata(&dssdev->dev);
 
 	dev_dbg(&dssdev->dev, "remove\n");
 
-	//sysfs_remove_group(&dssdev->dev.kobj, &taal_attr_group);
-
 	/* reset, to be sure that the panel is in a valid state */
-	//taal_hw_reset(dssdev);
+	//panel_hw_reset(dssdev);
 
 	kfree(td);
 }
 
-#define DW(x...) dsi_vc_dcs_write_nosync(TCH, (u8[]){x}, sizeof((u8[]){x}))
+
 
 #ifdef GAMMA
 static void lg_gamma(void)
@@ -463,7 +352,6 @@ static void lg_noadjust_gamma(void)
 # endif	// !GAMMA_ADJUST
 #endif	// !GAMMA
 
-#undef DW
 #undef LG_PFP
 #undef LG_PKP
 #undef LG_PKPN
@@ -493,7 +381,7 @@ static void panel_initial_settings(void)
 {
 	pr_debug("panel_initial_settings\n");
 
-#define DW(x...) dsi_vc_dcs_write_nosync(TCH, (u8[]){x}, sizeof((u8[]){x}))
+
 	DW(LG_UCS_COLMOD, 0x70);	/* 24 bpp */
 	DW(LG_UCS_MADCTL, 0x00); 	/* RGB, no H/V flip */
 	DW(LG_MCS_PANELSET, 0x20, 0xd6);
@@ -510,7 +398,7 @@ static void panel_initial_settings(void)
 	DW(LG_MCS_PWRCTL4, 0x12, 0x33, 0x1a, 0x1a, 0x07, 0x49 );
 	DW(LG_MCS_PWRCTL5, 0x6d );
 	DW(LG_MCS_PWRCTL6, 0x44, 0x63, 0x00 );
-#undef DW
+
 	// Prevent DSI TX FIFO overflow.
 	msleep(1);
 
@@ -544,11 +432,11 @@ static int panel_sleep(int sleep)
 	return 0;
 }
 
-static int taal_power_on(struct omap_dss_device *dssdev)
+static int panel_power_on(struct omap_dss_device *dssdev)
 {
-	struct taal_data *td = dev_get_drvdata(&dssdev->dev);
+	struct panel_data *td = dev_get_drvdata(&dssdev->dev);
 	int r;
-
+	pr_debug("panel_power_on\n");
 	r = omapdss_dsi_display_enable(dssdev);
 	if (r) {
 		dev_err(&dssdev->dev, "failed to enable DSI\n");
@@ -560,7 +448,7 @@ static int taal_power_on(struct omap_dss_device *dssdev)
 	if (r < 0)
 		goto err;
 
-	taal_sw_reset(dssdev);
+	panel_sw_reset(dssdev);
 
 	omapdss_dsi_vc_enable_hs(TCH, false);
 
@@ -575,87 +463,82 @@ static int taal_power_on(struct omap_dss_device *dssdev)
 
 	return 0;
 err:
-	//dev_err(&dssdev->dev, "error while enabling panel, issuing HW reset\n");
-	//taal_hw_reset(dssdev);
-
 	omapdss_dsi_display_disable(dssdev);
 err0:
 	return r;
 }
 
-static void taal_power_off(struct omap_dss_device *dssdev)
+static void panel_power_off(struct omap_dss_device *dssdev)
 {
-	struct taal_data *td = dev_get_drvdata(&dssdev->dev);
-	int r;
+	struct panel_data *td = dev_get_drvdata(&dssdev->dev);
 
 	dispc_enable_channel(OMAP_DSS_CHANNEL_LCD, 0);
 	// Virtual Channels will be disabled in omapdss_dsi_display_disable().
 
 	if (dssdev->platform_disable)
+	{
 		dssdev->platform_disable(dssdev);
+	}
 	else
+	{
 		// TODO: else sleep-in?
 		panel_sleep(1);
-
-	/*
-	if (r) {
-		dev_err(&dssdev->dev,
-				"error disabling panel, issuing HW reset\n");
-		taal_hw_reset(dssdev);
 	}
-	*/
 
 	omapdss_dsi_display_disable(dssdev);
 
 	td->enabled = 0;
 }
 
-static int taal_enable(struct omap_dss_device *dssdev)
+static int panel_enable(struct omap_dss_device *dssdev)
 {
-	struct taal_data *td = dev_get_drvdata(&dssdev->dev);
+	struct panel_data *td = dev_get_drvdata(&dssdev->dev);
 	int r;
-
+	pr_debug("panel_enable\n");
 	dev_dbg(&dssdev->dev, "enable\n");
 
 	mutex_lock(&td->lock);
 
-	if (dssdev->state != OMAP_DSS_DISPLAY_DISABLED) {
+	if (dssdev->state != OMAP_DSS_DISPLAY_DISABLED)
+	{
 		r = -EINVAL;
 		goto err;
 	}
 
 	dsi_bus_lock();
 
-	r = taal_power_on(dssdev);
+	r = panel_power_on(dssdev);
 
 	dsi_bus_unlock();
 
 	if (r)
+	{
 		goto err;
+	}
 
 	dssdev->state = OMAP_DSS_DISPLAY_ACTIVE;
 
 	mutex_unlock(&td->lock);
 
 	return 0;
+	
 err:
 	dev_dbg(&dssdev->dev, "enable failed\n");
 	mutex_unlock(&td->lock);
 	return r;
 }
 
-static void taal_disable(struct omap_dss_device *dssdev)
+static void panel_disable(struct omap_dss_device *dssdev)
 {
-	struct taal_data *td = dev_get_drvdata(&dssdev->dev);
-
+	struct panel_data *td = dev_get_drvdata(&dssdev->dev);
+	pr_debug("panel_disable\n");
 	dev_dbg(&dssdev->dev, "disable\n");
 
 	mutex_lock(&td->lock);
-
 	dsi_bus_lock();
 
 	if (dssdev->state == OMAP_DSS_DISPLAY_ACTIVE)
-		taal_power_off(dssdev);
+		panel_power_off(dssdev);
 
 	dsi_bus_unlock();
 
@@ -664,158 +547,113 @@ static void taal_disable(struct omap_dss_device *dssdev)
 	mutex_unlock(&td->lock);
 }
 
-static int taal_suspend(struct omap_dss_device *dssdev)
+static int panel_suspend(struct omap_dss_device *dssdev)
 {
-	struct taal_data *td = dev_get_drvdata(&dssdev->dev);
+	struct panel_data *td = dev_get_drvdata(&dssdev->dev);
 	int r;
 
 	dev_dbg(&dssdev->dev, "suspend\n");
 
 	mutex_lock(&td->lock);
 
-	if (dssdev->state != OMAP_DSS_DISPLAY_ACTIVE) {
-		r = -EINVAL;
-		goto err;
+	if (dssdev->state != OMAP_DSS_DISPLAY_ACTIVE)
+	{
+		mutex_unlock(&td->lock);
+		return -EINVAL;
 	}
 
 	dsi_bus_lock();
 	// TODO: fix suspend/resume, seems like sleep-in and DISPOFF don't work.
-	//r = panel_sleep(1);
 	if (dssdev->state == OMAP_DSS_DISPLAY_ACTIVE)
-		taal_power_off(dssdev);
+	{
+		panel_power_off(dssdev);
+	}
 	r = 0;
 	dsi_bus_unlock();
 
 	dssdev->state = OMAP_DSS_DISPLAY_SUSPENDED;
 
-err:
 	mutex_unlock(&td->lock);
 	return r;
 }
 
-static int taal_resume(struct omap_dss_device *dssdev)
+static int panel_resume(struct omap_dss_device *dssdev)
 {
-	struct taal_data *td = dev_get_drvdata(&dssdev->dev);
+	struct panel_data *td = dev_get_drvdata(&dssdev->dev);
 	int r;
 
 	dev_dbg(&dssdev->dev, "resume\n");
 
 	mutex_lock(&td->lock);
 
-	if (dssdev->state != OMAP_DSS_DISPLAY_SUSPENDED) {
-		r = -EINVAL;
-		goto err;
+	if (dssdev->state != OMAP_DSS_DISPLAY_SUSPENDED)
+	{
+		mutex_unlock(&td->lock);
+		return -EINVAL;
 	}
 
 	dsi_bus_lock();
-	//r = panel_sleep(0);
-	r = taal_power_on(dssdev);
+	r = panel_power_on(dssdev);
 	dsi_bus_unlock();
 
 	if (r)
+	{
 		dssdev->state = OMAP_DSS_DISPLAY_SUSPENDED;
+	}
 	else
+	{
 		dssdev->state = OMAP_DSS_DISPLAY_ACTIVE;
+	}
 
-err:
 	mutex_unlock(&td->lock);
 	return r;
 }
 
-static int taal_update(struct omap_dss_device *dssdev,
-				    u16 x, u16 y, u16 w, u16 h)
+static int panel_update(struct omap_dss_device *dssdev, u16 x, u16 y, u16 w, u16 h)
 {
 	dev_dbg(&dssdev->dev, "update is ignored for video mode displays\n");
 	return 0;
 }
 
-static int taal_sync(struct omap_dss_device *dssdev)
+static int panel_sync(struct omap_dss_device *dssdev)
 {
 	/* We are in video mode so wait for the vsync */
 	return dssdev->manager->wait_for_vsync(dssdev->manager);
 }
 
-#if 0
-static int taal_mirror(struct omap_dss_device *dssdev, bool enable)
-{
-	struct taal_data *td = dev_get_drvdata(&dssdev->dev);
-	int r;
-
-	dev_dbg(&dssdev->dev, "mirror %d\n", enable);
-
-	mutex_lock(&td->lock);
-
-	if (td->mirror == enable)
-		goto end;
-
-	dsi_bus_lock();
-	if (td->enabled) {
-		r = taal_set_addr_mode(td->rotate, enable);
-		if (r)
-			goto err;
-	}
-
-	td->mirror = enable;
-
-	dsi_bus_unlock();
-end:
-	mutex_unlock(&td->lock);
-	return 0;
-err:
-	dsi_bus_unlock();
-	mutex_unlock(&td->lock);
-	return r;
-}
-
-static bool taal_get_mirror(struct omap_dss_device *dssdev)
-{
-	struct taal_data *td = dev_get_drvdata(&dssdev->dev);
-	int r;
-
-	mutex_lock(&td->lock);
-	r = td->mirror;
-	mutex_unlock(&td->lock);
-
-	return r;
-}
-#endif
-
-static int taal_set_update_mode(struct omap_dss_device *dssdev,
-		enum omap_dss_update_mode mode)
+static int panel_set_update_mode(struct omap_dss_device *dssdev, enum omap_dss_update_mode mode)
 {
 	if (mode != OMAP_DSS_UPDATE_AUTO)
+	{
 		return -EINVAL;
+	}
 	return 0;
 }
 
-static enum omap_dss_update_mode taal_get_update_mode(
-		struct omap_dss_device *dssdev)
+static enum omap_dss_update_mode panel_get_update_mode(struct omap_dss_device *dssdev)
 {
 	return OMAP_DSS_UPDATE_AUTO;
 }
 
-static struct omap_dss_driver taal_driver = {
-	.probe		= taal_probe,
-	.remove		= taal_remove,
+static struct omap_dss_driver panel_driver = {
+	.probe		= panel_probe,
+	.remove		= panel_remove,
 
-	.enable		= taal_enable,
-	.disable	= taal_disable,
-	.suspend	= taal_suspend,
-	.resume		= taal_resume,
+	.enable		= panel_enable,
+	.disable	= panel_disable,
+	.suspend	= panel_suspend,
+	.resume		= panel_resume,
 
-	.set_update_mode = taal_set_update_mode,
-	.get_update_mode = taal_get_update_mode,
+	.set_update_mode = panel_set_update_mode,
+	.get_update_mode = panel_get_update_mode,
 
-	.update		= taal_update,
-	.sync		= taal_sync,
+	.update		= panel_update,
+	.sync		= panel_sync,
 
-	.get_resolution	= taal_get_resolution,
+	.get_resolution	= panel_get_resolution,
 	.get_recommended_bpp = omapdss_default_get_recommended_bpp,
 
-	//.set_mirror	= taal_mirror,
-	//.get_mirror	= taal_get_mirror,
-
-	.get_timings	= taal_get_timings,
+	.get_timings	= panel_get_timings,
 
 	.driver         = {
 		.name   = "lg_fwvga_43",
@@ -823,20 +661,21 @@ static struct omap_dss_driver taal_driver = {
 	},
 };
 
-static int __init taal_init(void)
+static int __init panel_init(void)
 {
-	omap_dss_register_driver(&taal_driver);
+	omap_dss_register_driver(&panel_driver);
 
 	return 0;
 }
 
-static void __exit taal_exit(void)
+static void __exit panel_exit(void)
 {
-	omap_dss_unregister_driver(&taal_driver);
+	omap_dss_unregister_driver(&panel_driver);
 }
 
-module_init(taal_init);
-module_exit(taal_exit);
+module_init(panel_init);
+module_exit(panel_exit);
 
 MODULE_DESCRIPTION("LG 4573 Driver");
 MODULE_LICENSE("GPL");
+#undef DW

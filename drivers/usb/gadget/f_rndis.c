@@ -33,6 +33,7 @@
 
 #include "u_ether.h"
 #include "rndis.h"
+#include "rndis.c"
 
 
 /*

@@ -1813,12 +1813,6 @@ fail:
 
 static struct omap2_hsmmc_info mmc[] __initdata = {
 	{
-		// SD slot.
-		.mmc		= 1,
-		.caps		= MMC_CAP_4_BIT_DATA,
-		.gpio_wp	= -EINVAL,
-	},
-	{
 		// eMMC.
 		.mmc		= 2,
 		.caps		= MMC_CAP_4_BIT_DATA | MMC_CAP_8_BIT_DATA,
@@ -1826,6 +1820,12 @@ static struct omap2_hsmmc_info mmc[] __initdata = {
 		.gpio_cd	= -EINVAL,
 		.ocr_mask	= MMC_VDD_165_195,
 		.nonremovable	= true,
+	},
+	{
+		// SD slot.
+		.mmc		= 1,
+		.caps		= MMC_CAP_4_BIT_DATA,
+		.gpio_wp	= -EINVAL,
 	},
 	{
 		// WiFi.
@@ -1963,12 +1963,12 @@ static void __init board_init(void)
 
 	ads7846_dev_init();
 
-	archos_mmc1_setup_gpios(&mmc[0]);
+	archos_mmc1_setup_gpios(&mmc[1]);
 	// TODO: get rid of magic number, this is WiFi power gpio.
 	board_vmmc3_fixed.gpio = 111;
 	omap2_hsmmc_init(mmc);
-	board_vmmc_ext_supply.dev = mmc[0].dev;
-	board_vmmc2_supply.dev = mmc[1].dev;
+	board_vmmc_ext_supply.dev = mmc[1].dev;
+	board_vmmc2_supply.dev = mmc[0].dev;
 	board_vmmc3_supply.dev = mmc[2].dev;
 	archos_wifi_init();
 	archos_audio_gpio_init();

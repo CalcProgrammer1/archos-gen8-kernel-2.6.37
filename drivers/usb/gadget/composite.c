@@ -75,6 +75,56 @@ static char composite_manufacturer[50];
 
 /*-------------------------------------------------------------------------*/
 
+static ssize_t enable_show(struct device *dev, struct device_attribute *attr,
+		char *buf)
+{
+	struct usb_function *f = dev_get_drvdata(dev);
+	return sprintf(buf, "%d\n", !f->disabled);
+}
+
+static ssize_t enable_store(
+		struct device *dev, struct device_attribute *attr,
+		const char *buf, size_t size)
+{
+	struct usb_function *f = dev_get_drvdata(dev);
+	struct usb_composite_driver	*driver = f->config->cdev->driver;
+	int value;
+
+	sscanf(buf, "%d", &value);
+	if (driver->enable_function)
+		driver->enable_function(f, value);
+	else
+		usb_function_set_enabled(f, value);
+
+	return size;
+}
+
+static DEVICE_ATTR(enable, S_IRUGO | S_IWUSR, enable_show, enable_store);
+
+void usb_function_set_enabled(struct usb_function *f, int enabled)
+{
+	f->disabled = !enabled;
+	kobject_uevent(&f->dev->kobj, KOBJ_CHANGE);
+}
+
+
+void usb_composite_force_reset(struct usb_composite_dev *cdev)
+{
+	unsigned long			flags;
+
+	spin_lock_irqsave(&cdev->lock, flags);
+	/* force reenumeration */
+	if (cdev && cdev->gadget && cdev->gadget->speed != USB_SPEED_UNKNOWN) {
+		spin_unlock_irqrestore(&cdev->lock, flags);
+
+		usb_gadget_disconnect(cdev->gadget);
+		msleep(10);
+		usb_gadget_connect(cdev->gadget);
+	} else {
+		spin_unlock_irqrestore(&cdev->lock, flags);
+	}
+}
+
 /**
  * usb_add_function() - add a function to a configuration
  * @config: the configuration

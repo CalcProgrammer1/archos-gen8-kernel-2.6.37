@@ -244,13 +244,14 @@ obj-$(CONFIG_MACH_ARCHOS)		+= archos-touchscreen.o \
 					   archos-battery.o \
 					   archos-leds.o \
 					   archos-usb-musb.o \
-					   archos-wifi.o
-#					   archos-accel.o \
-					   archos-camera-ov7675.o \
+					   archos-wifi.o \
+					   archos-accel.o \
 					   archos-die_id.o \
+					   archos-usb-android.o
+#					   archos-camera-ov7675.o \
 					   archos-keys.o \
 					   mmc-twl4030.o \
-					   archos-usb-android.o
+
 
 obj-$(CONFIG_CLOCKS_INIT) 		+= archos-clock.o
 
