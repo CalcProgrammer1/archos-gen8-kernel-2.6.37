@@ -1959,7 +1959,7 @@ static void __init board_init(void)
 	// TODO: it can supply 500mA?
 	archos_usb_musb_init();
 
-	//archos_accel_init(&board_mma7660fc_pdata);
+	archos_accel_init(&board_mma7660fc_pdata);
 
 	ads7846_dev_init();
 
