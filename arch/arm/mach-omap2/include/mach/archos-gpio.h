@@ -5,14 +5,12 @@
 
 struct archos_gpio {
 	int nb;
-	int mux_cfg;
 };
 
 #define GPIO_EXISTS(x) ( x.nb >= 0 )
-//#define GPIO_MUX(x) ( x.mux_cfg )
 #define GPIO_PIN(x) ( x.nb )
-#define UNUSED_GPIO (struct archos_gpio){ .nb = -1, .mux_cfg = -1 }
-#define INITIALIZE_GPIO(pin, cfg) (struct archos_gpio){ .nb = pin, .mux_cfg = cfg }
+#define UNUSED_GPIO (struct archos_gpio){ .nb = -1 }
+#define INITIALIZE_GPIO(pin, cfg) (struct archos_gpio){ .nb = pin }
 
 static inline void archos_gpio_init_output(const struct archos_gpio *x, const char *label)
 {

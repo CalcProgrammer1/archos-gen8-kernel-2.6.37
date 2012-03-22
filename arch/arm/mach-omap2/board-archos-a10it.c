@@ -74,31 +74,31 @@ extern int __init archos_audio_gpio_init(void);
 static struct archos_usb_config usb_config __initdata = {
 	.nrev = 7,
 	.rev[0] = {
-		.usb_pwroff = { 56, R8_34XX_GPIO56_OUT },
+		.usb_pwroff = { 56 },
 		.usb_max_power = 500,
 	},
 	.rev[1] = {
-		.usb_pwroff = { 56, R8_34XX_GPIO56_OUT },
+		.usb_pwroff = { 56 },
 		.usb_max_power = 500,
 	},
 	.rev[2] = {
-		.usb_pwroff = { 56, R8_34XX_GPIO56_OUT },
+		.usb_pwroff = { 56 },
 		.usb_max_power = 500,
 	},
 	.rev[3] = {
-		.usb_pwroff = { 56, R8_34XX_GPIO56_OUT },
+		.usb_pwroff = { 56 },
 		.usb_max_power = 500,
 	},
 	.rev[4] = {
-		.usb_pwroff = { 56, R8_34XX_GPIO56_OUT },
+		.usb_pwroff = { 56 },
 		.usb_max_power = 500,
 	},
 	.rev[5] = {
-		.usb_pwroff = { 56, R8_34XX_GPIO56_OUT },
+		.usb_pwroff = { 56 },
 		.usb_max_power = 500,
 	},
 	.rev[6] = {
-		.usb_pwroff = { 56, R8_34XX_GPIO56_OUT },
+		.usb_pwroff = { 56 },
 		.usb_max_power = 500,
 	},
 };
@@ -106,11 +106,11 @@ static struct archos_usb_config usb_config __initdata = {
 static struct archos_display_config display_config __initdata = {
 	.nrev = 7,
 	.rev[0] = {
-		.lcd_pwon = 	{ 157,	AA21_34XX_GPIO157_OUT },
-		.lcd_rst = 	{ 14,	AF11_3630_GPIO14 },		// lvds_en
+		.lcd_pwon = 	{ 157 },
+		.lcd_rst = 	{ 14 },		// lvds_en
 		.lcd_pci = 	UNUSED_GPIO,
-		.hdmi_pwr = 	{ 21,	AH14_3630_GPIO21 },
-		.hdmi_int = 	{ 110,	C26_3430_GPIO110 },
+		.hdmi_pwr = 	{ 21 },
+		.hdmi_int = 	{ 110 },
 		.vcom_pwm = 	{ .timer = -1, .mux_cfg = -1 },
 		.spi = {
 			.spi_clk  = UNUSED_GPIO,
@@ -119,11 +119,11 @@ static struct archos_display_config display_config __initdata = {
 		},
 	},
 	.rev[1] = {
-		.lcd_pwon = 	{ 157,	AA21_34XX_GPIO157_OUT },
-		.lcd_rst = 	{ 14,	AF11_3630_GPIO14 },
-		.lcd_pci = 	{ 146,	AA25_3630_GPIO146 },		// blk_en
-		.hdmi_pwr = 	{ 21,	AH14_3630_GPIO21 },
-		.hdmi_int = 	{ 110,	C26_3430_GPIO110 },
+		.lcd_pwon = 	{ 157 },
+		.lcd_rst = 	{ 14 },
+		.lcd_pci = 	{ 146 },		// blk_en
+		.hdmi_pwr = 	{ 21 },
+		.hdmi_int = 	{ 110 },
 		.vcom_pwm = 	{ .timer = -1, .mux_cfg = -1 },
 		.spi = {
 			.spi_clk  = UNUSED_GPIO,
@@ -132,11 +132,11 @@ static struct archos_display_config display_config __initdata = {
 		},
         },
 	.rev[2] = {
-		.lcd_pwon = 	{ 157,	AA21_34XX_GPIO157_OUT },
-		.lcd_rst = 	{ 14,	AF11_3630_GPIO14 },
-		.lcd_pci = 	{ 146,	AA25_3630_GPIO146 },		// blk_en
-		.hdmi_pwr = 	{ 21,	AH14_3630_GPIO21 },
-		.hdmi_int = 	{ 110,	C26_3430_GPIO110 },
+		.lcd_pwon = 	{ 157 },
+		.lcd_rst = 	{ 14 },
+		.lcd_pci = 	{ 146 },		// blk_en
+		.hdmi_pwr = 	{ 21 },
+		.hdmi_int = 	{ 110 },
 		.vcom_pwm = 	{ .timer = -1, .mux_cfg = -1 },
 		.spi = {
 			.spi_clk  = UNUSED_GPIO,
@@ -145,11 +145,11 @@ static struct archos_display_config display_config __initdata = {
 		},
         },
 	.rev[3] = {
-		.lcd_pwon = 	{ 157,	AA21_34XX_GPIO157_OUT },
-		.lcd_rst = 	{ 14,	AF11_3630_GPIO14 },
-		.lcd_pci = 	{ 146,	AA25_3630_GPIO146 },		// blk_en
-		.hdmi_pwr = 	{ 21,	AH14_3630_GPIO21 },
-		.hdmi_int = 	{ 110,	C26_3430_GPIO110 },
+		.lcd_pwon = 	{ 157 },
+		.lcd_rst = 	{ 14 },
+		.lcd_pci = 	{ 146 },		// blk_en
+		.hdmi_pwr = 	{ 21 },
+		.hdmi_int = 	{ 110 },
 		.vcom_pwm = 	{ .timer = -1, .mux_cfg = -1 },
 		.spi = {
 			.spi_clk  = UNUSED_GPIO,
@@ -158,11 +158,11 @@ static struct archos_display_config display_config __initdata = {
 		},
         },
 	.rev[4] = {
-		.lcd_pwon = 	{ 157,	AA21_34XX_GPIO157_OUT },
-		.lcd_rst = 	{ 14,	AF11_3630_GPIO14 },
-		.lcd_pci = 	{ 146,	AA25_3630_GPIO146 },		// blk_en
-		.hdmi_pwr = 	{ 21,	AH14_3630_GPIO21 },
-		.hdmi_int = 	{ 110,	C26_3430_GPIO110 },
+		.lcd_pwon = 	{ 157 },
+		.lcd_rst = 	{ 14 },
+		.lcd_pci = 	{ 146 },		// blk_en
+		.hdmi_pwr = 	{ 21 },
+		.hdmi_int = 	{ 110 },
 		.vcom_pwm = 	{ .timer = -1, .mux_cfg = -1 },
 		.spi = {
 			.spi_clk  = UNUSED_GPIO,
@@ -171,11 +171,11 @@ static struct archos_display_config display_config __initdata = {
 		},
         },
 	.rev[5] = {
-		.lcd_pwon = 	{ 157,	AA21_34XX_GPIO157_OUT },
-		.lcd_rst = 	{ 14,	AF11_3630_GPIO14 },
-		.lcd_pci = 	{ 146,	AA25_3630_GPIO146 },		// blk_en
-		.hdmi_pwr = 	{ 21,	AH14_3630_GPIO21 },
-		.hdmi_int = 	{ 110,	C26_3430_GPIO110 },
+		.lcd_pwon = 	{ 157 },
+		.lcd_rst = 	{ 14 },
+		.lcd_pci = 	{ 146 },		// blk_en
+		.hdmi_pwr = 	{ 21 },
+		.hdmi_int = 	{ 110 },
 		.vcom_pwm = 	{ .timer = -1, .mux_cfg = -1 },
 		.spi = {
 			.spi_clk  = UNUSED_GPIO,
@@ -184,11 +184,11 @@ static struct archos_display_config display_config __initdata = {
 		},
         },
 	.rev[6] = {
-		.lcd_pwon = 	{ 157,	AA21_34XX_GPIO157_OUT },
-		.lcd_rst = 	{ 14,	AF11_3630_GPIO14 },
-		.lcd_pci = 	{ 146,	AA25_3630_GPIO146 },		// blk_en
-		.hdmi_pwr = 	{ 21,	AH14_3630_GPIO21 },
-		.hdmi_int = 	{ 110,	C26_3430_GPIO110 },
+		.lcd_pwon = 	{ 157 },
+		.lcd_rst = 	{ 14 },
+		.lcd_pci = 	{ 146 },		// blk_en
+		.hdmi_pwr = 	{ 21 },
+		.hdmi_int = 	{ 110 },
 		.vcom_pwm = 	{ .timer = -1, .mux_cfg = -1 },
 		.spi = {
 			.spi_clk  = UNUSED_GPIO,
@@ -211,50 +211,50 @@ static int __init archos_lcd_panel_init(struct omap_dss_device *disp_data)
 static struct archos_tsp_config tsp_config __initdata = {
 	.nrev = 7,
 	.rev[0] = {
-		.irq_gpio = { .nb = 156, .mux_cfg = Y21_3630_GPIO156 },
-		.pwr_gpio = { .nb = 160, .mux_cfg = T21_3630_GPIO160 },
+		.irq_gpio = { .nb = 156 },
+		.pwr_gpio = { .nb = 160 },
 		.x_plate_ohms = 745,
 		.pressure_max = 700,
 		.inversion_flags = Y_INV,
 	},
 	.rev[1] = {
-		.irq_gpio = { .nb = 156, .mux_cfg = Y21_3630_GPIO156 },
-		.pwr_gpio = { .nb = 160, .mux_cfg = T21_3630_GPIO160 },
+		.irq_gpio = { .nb = 156 },
+		.pwr_gpio = { .nb = 160 },
 		.x_plate_ohms = 745,
 		.pressure_max = 700,
 		.inversion_flags = Y_INV,
 	},
 	.rev[2] = {
-		.irq_gpio = { .nb = 156, .mux_cfg = Y21_3630_GPIO156 },
-		.pwr_gpio = { .nb = 160, .mux_cfg = T21_3630_GPIO160 },
+		.irq_gpio = { .nb = 156 },
+		.pwr_gpio = { .nb = 160 },
 		.x_plate_ohms = 745,
 		.pressure_max = 700,
 		.inversion_flags = Y_INV,
 	},
 	.rev[3] = {
-		.irq_gpio = { .nb = 156, .mux_cfg = Y21_3630_GPIO156 },
-		.pwr_gpio = { .nb = 160, .mux_cfg = T21_3630_GPIO160 },
+		.irq_gpio = { .nb = 156 },
+		.pwr_gpio = { .nb = 160 },
 		.x_plate_ohms = 745,
 		.pressure_max = 700,
 		.inversion_flags = Y_INV,
 	},
 	.rev[4] = {
-		.irq_gpio = { .nb = 156, .mux_cfg = Y21_3630_GPIO156 },
-		.pwr_gpio = { .nb = 160, .mux_cfg = T21_3630_GPIO160 },
+		.irq_gpio = { .nb = 156 },
+		.pwr_gpio = { .nb = 160 },
 		.x_plate_ohms = 745,
 		.pressure_max = 700,
 		.inversion_flags = Y_INV,
 	},
 	.rev[5] = {
-		.irq_gpio = { .nb = 156, .mux_cfg = Y21_3630_GPIO156 },
-		.pwr_gpio = { .nb = 160, .mux_cfg = T21_3630_GPIO160 },
+		.irq_gpio = { .nb = 156 },
+		.pwr_gpio = { .nb = 160 },
 		.x_plate_ohms = 745,
 		.pressure_max = 700,
 		.inversion_flags = Y_INV,
 	},
 	.rev[6] = {
-		.irq_gpio = { .nb = 156, .mux_cfg = Y21_3630_GPIO156 },
-		.pwr_gpio = { .nb = 160, .mux_cfg = T21_3630_GPIO160 },
+		.irq_gpio = { .nb = 156 },
+		.pwr_gpio = { .nb = 160 },
 		.x_plate_ohms = 745,
 		.pressure_max = 700,
 		.inversion_flags = Y_INV,
@@ -265,56 +265,56 @@ static struct archos_audio_config audio_config __initdata = {
 	.nrev = 7,
 	.rev[0] = {
 		.spdif = UNUSED_GPIO,
-		.hp_on = { .nb = 22, .mux_cfg = AF9_3430_GPIO22},
-		.headphone_plugged = { .nb = 109, .mux_cfg = B25_3430_GPIO109},
+		.hp_on = { .nb = 22 },
+		.headphone_plugged = { .nb = 109 },
 		.clk_mux = AE22_3430_CLKOUT2,
 		.vamp_vbat = UNUSED_GPIO,
 		.vamp_dc = UNUSED_GPIO,
 	},
 	.rev[1] = {
 		.spdif = UNUSED_GPIO,
-		.hp_on = { .nb = 22, .mux_cfg = AF9_3430_GPIO22},
-		.headphone_plugged = { .nb = 109, .mux_cfg = B25_3430_GPIO109},
+		.hp_on = { .nb = 22 },
+		.headphone_plugged = { .nb = 109 },
 		.clk_mux = AE22_3430_CLKOUT2,
 		.vamp_vbat = UNUSED_GPIO,
 		.vamp_dc = UNUSED_GPIO,
 	},
 	.rev[2] = {
 		.spdif = UNUSED_GPIO,
-		.hp_on = { .nb = 22, .mux_cfg = AF9_3430_GPIO22},
-		.headphone_plugged = { .nb = 109, .mux_cfg = B25_3430_GPIO109},
+		.hp_on = { .nb = 22 },
+		.headphone_plugged = { .nb = 109 },
 		.clk_mux = AE22_3430_CLKOUT2,
 		.vamp_vbat = UNUSED_GPIO,
 		.vamp_dc = UNUSED_GPIO,
 	},
 	.rev[3] = {
 		.spdif = UNUSED_GPIO,
-		.hp_on = { .nb = 22, .mux_cfg = AF9_3430_GPIO22},
-		.headphone_plugged = { .nb = 109, .mux_cfg = B25_3430_GPIO109},
+		.hp_on = { .nb = 22 },
+		.headphone_plugged = { .nb = 109 },
 		.clk_mux = AE22_3430_CLKOUT2,
 		.vamp_vbat = UNUSED_GPIO,
 		.vamp_dc = UNUSED_GPIO,
 	},
 	.rev[4] = {
 		.spdif = UNUSED_GPIO,
-		.hp_on = { .nb = 22, .mux_cfg = AF9_3430_GPIO22},
-		.headphone_plugged = { .nb = 109, .mux_cfg = B25_3430_GPIO109},
+		.hp_on = { .nb = 22 },
+		.headphone_plugged = { .nb = 109 },
 		.clk_mux = AE22_3430_CLKOUT2,
 		.vamp_vbat = UNUSED_GPIO,
 		.vamp_dc = UNUSED_GPIO,
 	},
 	.rev[5] = {
 		.spdif = UNUSED_GPIO,
-		.hp_on = { .nb = 22, .mux_cfg = AF9_3430_GPIO22},
-		.headphone_plugged = { .nb = 109, .mux_cfg = B25_3430_GPIO109},
+		.hp_on = { .nb = 22 },
+		.headphone_plugged = { .nb = 109 },
 		.clk_mux = AE22_3430_CLKOUT2,
 		.vamp_vbat = UNUSED_GPIO,
 		.vamp_dc = UNUSED_GPIO,
 	},
 	.rev[6] = {
 		.spdif = UNUSED_GPIO,
-		.hp_on = { .nb = 22, .mux_cfg = AF9_3430_GPIO22},
-		.headphone_plugged = { .nb = 109, .mux_cfg = B25_3430_GPIO109},
+		.hp_on = { .nb = 22 },
+		.headphone_plugged = { .nb = 109 },
 		.clk_mux = AE22_3430_CLKOUT2,
 		.vamp_vbat = UNUSED_GPIO,
 		.vamp_dc = UNUSED_GPIO,
@@ -370,41 +370,41 @@ static struct archos_charge_config charge_config __initdata = {
 static struct archos_wifi_bt_config wifi_bt_dev_conf __initdata = {
 	.nrev = 7,
 	.rev[0] = {
-		.wifi_power 	= { .nb = 111, .mux_cfg = B26_3430_GPIO111 },
-		.wifi_irq 	= { .nb = 114, .mux_cfg = AG18_3430_GPIO114_UP },
-		.bt_power 	= { .nb = 162, .mux_cfg = W21_3430_GPIO162 },
+		.wifi_power 	= { .nb = 111 },
+		.wifi_irq 	= { .nb = 114 },
+		.bt_power 	= { .nb = 162 },
 	},
 	.rev[1] = {
-		.wifi_power 	= { .nb = 111, .mux_cfg = B26_3430_GPIO111 },
-		.wifi_irq 	= { .nb = 114, .mux_cfg = AG18_3430_GPIO114_UP },
-		.bt_power 	= { .nb = 162, .mux_cfg = W21_3430_GPIO162 },
+		.wifi_power 	= { .nb = 111 },
+		.wifi_irq 	= { .nb = 114 },
+		.bt_power 	= { .nb = 162 },
 	},
 	.rev[2] = {
-		.wifi_power 	= { .nb = 111, .mux_cfg = B26_3430_GPIO111 },
-		.wifi_irq 	= { .nb = 114, .mux_cfg = AG18_3430_GPIO114_UP },
-		.bt_power 	= { .nb = 162, .mux_cfg = W21_3430_GPIO162 },
+		.wifi_power 	= { .nb = 111 },
+		.wifi_irq 	= { .nb = 114 },
+		.bt_power 	= { .nb = 162 },
 	},
 	.rev[3] = {
-		.wifi_power 	= { .nb = 111, .mux_cfg = B26_3430_GPIO111 },
-		.wifi_irq 	= { .nb = 114, .mux_cfg = AG18_3430_GPIO114_UP },
-		.bt_power 	= { .nb = 162, .mux_cfg = W21_3430_GPIO162 },
+		.wifi_power 	= { .nb = 111 },
+		.wifi_irq 	= { .nb = 114 },
+		.bt_power 	= { .nb = 162 },
 	},
 	.rev[4] = {
-		.wifi_power 	= { .nb = 111, .mux_cfg = B26_3430_GPIO111 },
-		.wifi_irq 	= { .nb = 114, .mux_cfg = AG18_3430_GPIO114_UP },
-		.bt_power 	= { .nb = 162, .mux_cfg = W21_3430_GPIO162 },
+		.wifi_power 	= { .nb = 111 },
+		.wifi_irq 	= { .nb = 114 },
+		.bt_power 	= { .nb = 162 },
 		.wifi_pa_type	= PA_TYPE_TQM67002_NEW_BOM,
 	},
 	.rev[5] = {
-		.wifi_power 	= { .nb = 111, .mux_cfg = B26_3430_GPIO111 },
-		.wifi_irq 	= { .nb = 114, .mux_cfg = AG18_3430_GPIO114_UP },
-		.bt_power 	= { .nb = 162, .mux_cfg = W21_3430_GPIO162 },
+		.wifi_power 	= { .nb = 111 },
+		.wifi_irq 	= { .nb = 114 },
+		.bt_power 	= { .nb = 162 },
 		.wifi_pa_type	= PA_TYPE_RF3482,
 	},
 	.rev[6] = {
-		.wifi_power 	= { .nb = 111, .mux_cfg = B26_3430_GPIO111 },
-		.wifi_irq 	= { .nb = 114, .mux_cfg = AG18_3430_GPIO114_UP },
-		.bt_power 	= { .nb = 162, .mux_cfg = W21_3430_GPIO162 },
+		.wifi_power 	= { .nb = 111 },
+		.wifi_irq 	= { .nb = 114 },
+		.bt_power 	= { .nb = 162 },
 		.wifi_pa_type	= PA_TYPE_TQM67002A,
 	},
 };
@@ -412,31 +412,31 @@ static struct archos_wifi_bt_config wifi_bt_dev_conf __initdata = {
 static struct archos_accel_config accel_config __initdata = {
 	.nrev = 7,
 	.rev[0] = {
-		.accel_int1 = { .nb = 115, .mux_cfg = AH18_3430_GPIO115},
+		.accel_int1 = { .nb = 115 },
 		.accel_int2 = UNUSED_GPIO,
 	},
 	.rev[1] = {
-		.accel_int1 = { .nb = 115, .mux_cfg = AH18_3430_GPIO115},
+		.accel_int1 = { .nb = 115 },
 		.accel_int2 = UNUSED_GPIO,
 	},
 	.rev[2] = {
-		.accel_int1 = { .nb = 115, .mux_cfg = AH18_3430_GPIO115},
+		.accel_int1 = { .nb = 115 },
 		.accel_int2 = UNUSED_GPIO,
 	},
 	.rev[3] = {
-		.accel_int1 = { .nb = 115, .mux_cfg = AH18_3430_GPIO115},
+		.accel_int1 = { .nb = 115 },
 		.accel_int2 = UNUSED_GPIO,
 	},
 	.rev[4] = {
-		.accel_int1 = { .nb = 115, .mux_cfg = AH18_3430_GPIO115},
+		.accel_int1 = { .nb = 115 },
 		.accel_int2 = UNUSED_GPIO,
 	},
 	.rev[5] = {
-		.accel_int1 = { .nb = 115, .mux_cfg = AH18_3430_GPIO115},
+		.accel_int1 = { .nb = 115 },
 		.accel_int2 = UNUSED_GPIO,
 	},
 	.rev[6] = {
-		.accel_int1 = { .nb = 115, .mux_cfg = AH18_3430_GPIO115},
+		.accel_int1 = { .nb = 115 },
 		.accel_int2 = UNUSED_GPIO,
 	},
 };
@@ -444,95 +444,95 @@ static struct archos_accel_config accel_config __initdata = {
 static struct archos_camera_config camera_config __initdata = {
 	.nrev = 7,
 	.rev[0] = {
-		.pwr_down = { .nb = 15, .mux_cfg = AG12_3630_GPIO15},
-		.reset = { .nb = 16, .mux_cfg = AH12_3630_GPIO16},
+		.pwr_down = { .nb = 15 },
+		.reset = { .nb = 16 },
 	},
 	.rev[1] = {
-		.pwr_down = { .nb = 15, .mux_cfg = AG12_3630_GPIO15},
-		.reset = { .nb = 16, .mux_cfg = AH12_3630_GPIO16},
+		.pwr_down = { .nb = 15 },
+		.reset = { .nb = 16 },
 	},
 	.rev[2] = {
-		.pwr_down = { .nb = 15, .mux_cfg = AG12_3630_GPIO15},
-		.reset = { .nb = 16, .mux_cfg = AH12_3630_GPIO16},
+		.pwr_down = { .nb = 15 },
+		.reset = { .nb = 16 },
 	},
 	.rev[3] = {
-		.pwr_down = { .nb = 15, .mux_cfg = AG12_3630_GPIO15},
-		.reset = { .nb = 16, .mux_cfg = AH12_3630_GPIO16},
+		.pwr_down = { .nb = 15 },
+		.reset = { .nb = 16 },
 	},
 	.rev[4] = {
-		.pwr_down = { .nb = 15, .mux_cfg = AG12_3630_GPIO15},
-		.reset = { .nb = 16, .mux_cfg = AH12_3630_GPIO16},
+		.pwr_down = { .nb = 15 },
+		.reset = { .nb = 16 },
 	},
 	.rev[5] = {
-		.pwr_down = { .nb = 15, .mux_cfg = AG12_3630_GPIO15},
-		.reset = { .nb = 16, .mux_cfg = AH12_3630_GPIO16},
+		.pwr_down = { .nb = 15 },
+		.reset = { .nb = 16 },
 	},
 	.rev[6] = {
-		.pwr_down = { .nb = 15, .mux_cfg = AG12_3630_GPIO15},
-		.reset = { .nb = 16, .mux_cfg = AH12_3630_GPIO16},
+		.pwr_down = { .nb = 15 },
+		.reset = { .nb = 16 },
 	},
 };
 
 static struct archos_leds_config leds_config __initdata = {
 	.nrev = 7,
 	.rev[0] = {
-		.power_led = { .nb = 57, .mux_cfg = P8_34XX_GPIO57},
-		.backlight_led = { .timer = 8, .mux_cfg = AD25_3630_GPT08 },
-		.backlight_power = { .nb = 23, .mux_cfg = AG9_3430_GPIO23 },
+		.power_led = { .nb = 57 },
+		.backlight_led = { .timer = 8 },
+		.backlight_power = { .nb = 23 },
 		.bkl_freq = 200,
 		.bkl_max = 254,
 		.pwr_invert = 1,
 		.bkl_invert = 1,
 	},
 	.rev[1] = {
-		.power_led = { .nb = 57, .mux_cfg = P8_34XX_GPIO57},
-		.backlight_led = { .timer = 8, .mux_cfg = AD25_3630_GPT08 },
-		.backlight_power = { .nb = 23, .mux_cfg = AG9_3430_GPIO23 },
+		.power_led = { .nb = 57 },
+		.backlight_led = { .timer = 8 },
+		.backlight_power = { .nb = 23 },
 		.bkl_freq = 20000,
 		.bkl_max = 254,
 		.pwr_invert = 1,
 		.bkl_invert = 1,
 	},
 	.rev[2] = {
-		.power_led = { .nb = 57, .mux_cfg = P8_34XX_GPIO57},
-		.backlight_led = { .timer = 8, .mux_cfg = AD25_3630_GPT08 },
-		.backlight_power = { .nb = 23, .mux_cfg = AG9_3430_GPIO23 },
+		.power_led = { .nb = 57 },
+		.backlight_led = { .timer = 8 },
+		.backlight_power = { .nb = 23 },
 		.bkl_freq = 20000,
 		.bkl_max = 254,
 		.bkl_invert = 1,
 		.pwr_invert = 1,
 	},
 	.rev[3] = {
-		.power_led = { .nb = 57, .mux_cfg = P8_34XX_GPIO57},
-		.backlight_led = { .timer = 8, .mux_cfg = AD25_3630_GPT08 },
-		.backlight_power = { .nb = 23, .mux_cfg = AG9_3430_GPIO23 },
+		.power_led = { .nb = 57 },
+		.backlight_led = { .timer = 8 },
+		.backlight_power = { .nb = 23 },
 		.bkl_freq = 20000,
 		.bkl_max = 254,
 		.bkl_invert = 1,
 		.pwr_invert = 1,
 	},
 	.rev[4] = {
-		.power_led = { .nb = 57, .mux_cfg = P8_34XX_GPIO57},
-		.backlight_led = { .timer = 8, .mux_cfg = AD25_3630_GPT08 },
-		.backlight_power = { .nb = 23, .mux_cfg = AG9_3430_GPIO23 },
+		.power_led = { .nb = 57 },
+		.backlight_led = { .timer = 8 },
+		.backlight_power = { .nb = 23 },
 		.bkl_freq = 20000,
 		.bkl_max = 254,
 		.bkl_invert = 1,
 		.pwr_invert = 1,
 	},
 	.rev[5] = {
-		.power_led = { .nb = 57, .mux_cfg = P8_34XX_GPIO57},
-		.backlight_led = { .timer = 8, .mux_cfg = AD25_3630_GPT08 },
-		.backlight_power = { .nb = 23, .mux_cfg = AG9_3430_GPIO23 },
+		.power_led = { .nb = 57 },
+		.backlight_led = { .timer = 8 },
+		.backlight_power = { .nb = 23 },
 		.bkl_freq = 20000,
 		.bkl_max = 254,
 		.bkl_invert = 1,
 		.pwr_invert = 1,
 	},
 	.rev[6] = {
-		.power_led = { .nb = 57, .mux_cfg = P8_34XX_GPIO57},
-		.backlight_led = { .timer = 8, .mux_cfg = AD25_3630_GPT08 },
-		.backlight_power = { .nb = 23, .mux_cfg = AG9_3430_GPIO23 },
+		.power_led = { .nb = 57 },
+		.backlight_led = { .timer = 8 },
+		.backlight_power = { .nb = 23 },
 		.bkl_freq = 20000,
 		.bkl_max = 254,
 		.bkl_invert = 1,
@@ -543,64 +543,64 @@ static struct archos_leds_config leds_config __initdata = {
 static struct archos_sd_config sd_config __initdata = {
 	.nrev = 7,
 	.rev[0] = {
-		.sd_power = { .nb = 158, .mux_cfg = V21_3430_GPIO158 },
-		.sd_detect = { .nb = 65, .mux_cfg = J8_3430_GPIO65 },
-		.sd_prewarn = { .nb = 58, .mux_cfg = N8_3430_GPIO58_IN },
+		.sd_power = { .nb = 158 },
+		.sd_detect = { .nb = 65 },
+		.sd_prewarn = { .nb = 58 },
 	},
 	.rev[1] = {
-		.sd_power = { .nb = 158, .mux_cfg = V21_3430_GPIO158 },
-		.sd_detect = { .nb = 65, .mux_cfg = J8_3430_GPIO65 },
-		.sd_prewarn = { .nb = 58, .mux_cfg = N8_3430_GPIO58_IN },
+		.sd_power = { .nb = 158 },
+		.sd_detect = { .nb = 65 },
+		.sd_prewarn = { .nb = 58 },
 	},
 	.rev[2] = {
-		.sd_power = { .nb = 158, .mux_cfg = V21_3430_GPIO158 },
-		.sd_detect = { .nb = 65, .mux_cfg = J8_3430_GPIO65 },
-		.sd_prewarn = { .nb = 58, .mux_cfg = N8_3430_GPIO58_IN },
+		.sd_power = { .nb = 158 },
+		.sd_detect = { .nb = 65 },
+		.sd_prewarn = { .nb = 58 },
 	},
 	.rev[3] = {
-		.sd_power = { .nb = 158, .mux_cfg = V21_3430_GPIO158 },
-		.sd_detect = { .nb = 65, .mux_cfg = J8_3430_GPIO65 },
-		.sd_prewarn = { .nb = 58, .mux_cfg = N8_3430_GPIO58_IN },
+		.sd_power = { .nb = 158 },
+		.sd_detect = { .nb = 65 },
+		.sd_prewarn = { .nb = 58 },
 	},
 	.rev[4] = {
-		.sd_power = { .nb = 158, .mux_cfg = V21_3430_GPIO158 },
-		.sd_detect = { .nb = 65, .mux_cfg = J8_3430_GPIO65 },
-		.sd_prewarn = { .nb = 58, .mux_cfg = N8_3430_GPIO58_IN },
+		.sd_power = { .nb = 158 },
+		.sd_detect = { .nb = 65 },
+		.sd_prewarn = { .nb = 58 },
 	},
 	.rev[5] = {
-		.sd_power = { .nb = 158, .mux_cfg = V21_3430_GPIO158 },
-		.sd_detect = { .nb = 65, .mux_cfg = J8_3430_GPIO65 },
-		.sd_prewarn = { .nb = 58, .mux_cfg = N8_3430_GPIO58_IN },
+		.sd_power = { .nb = 158 },
+		.sd_detect = { .nb = 65 },
+		.sd_prewarn = { .nb = 58 },
 	},
 	.rev[6] = {
-		.sd_power = { .nb = 158, .mux_cfg = V21_3430_GPIO158 },
-		.sd_detect = { .nb = 65, .mux_cfg = J8_3430_GPIO65 },
-		.sd_prewarn = { .nb = 58, .mux_cfg = N8_3430_GPIO58_IN },
+		.sd_power = { .nb = 158 },
+		.sd_detect = { .nb = 65 },
+		.sd_prewarn = { .nb = 58 },
 	},
 };
 
 static struct archos_keys_config keys_config __initdata = {
 	.nrev = 7,
 	.rev[0] = {
-		.power = { .nb = 64, .mux_cfg = K8_3430_GPIO64},
+		.power = { .nb = 64 },
 	},
 	.rev[1] = {
-		.power = { .nb = 64, .mux_cfg = K8_3430_GPIO64},
+		.power = { .nb = 64 },
 	},
 	.rev[2] = {
-		.power = { .nb = 64, .mux_cfg = K8_3430_GPIO64},
+		.power = { .nb = 64 },
 	},
 	.rev[3] = {
-		.power = { .nb = 64, .mux_cfg = K8_3430_GPIO64},
+		.power = { .nb = 64 },
 	},
 	.rev[4] = {
-		.power = { .nb = 64, .mux_cfg = K8_3430_GPIO64},
+		.power = { .nb = 64 },
 	},
 	.rev[5] = {
-		.power = { .nb = 64, .mux_cfg = K8_3430_GPIO64},
+		.power = { .nb = 64 },
 	},
 	.rev[6] = {
-		.power = { .nb = 64, .mux_cfg = K8_3430_GPIO64},
+		.power = { .nb = 64 },
 	},
 };
 
@@ -608,25 +608,25 @@ static struct archos_keys_config keys_config __initdata = {
 static struct archos_supply5V_config supply_5V_config __initdata = {
 	.nrev = 7,
 	.rev[0] = {
-		.pwr_on = { .nb = 144, .mux_cfg = AB26_34XX_GPIO144},
+		.pwr_on = { .nb = 144 },
 	},
 	.rev[1] = {
-		.pwr_on = { .nb = 144, .mux_cfg = AB26_34XX_GPIO144},
+		.pwr_on = { .nb = 144 },
 	},
 	.rev[2] = {
-		.pwr_on = { .nb = 144, .mux_cfg = AB26_34XX_GPIO144},
+		.pwr_on = { .nb = 144 },
 	},
 	.rev[3] = {
-		.pwr_on = { .nb = 144, .mux_cfg = AB26_34XX_GPIO144},
+		.pwr_on = { .nb = 144 },
 	},
 	.rev[4] = {
-		.pwr_on = { .nb = 144, .mux_cfg = AB26_34XX_GPIO144},
+		.pwr_on = { .nb = 144 },
 	},
 	.rev[5] = {
-		.pwr_on = { .nb = 144, .mux_cfg = AB26_34XX_GPIO144},
+		.pwr_on = { .nb = 144 },
 	},
 	.rev[6] = {
-		.pwr_on = { .nb = 144, .mux_cfg = AB26_34XX_GPIO144},
+		.pwr_on = { .nb = 144 },
 	},
 };
 
@@ -637,27 +637,27 @@ static struct archos_fsusb_config fsusb_config __initdata = {
 		.enable_usb_ohci = UNUSED_GPIO,
 	},
 	.rev[1] = {
-		.suspend = { .nb = 27, .mux_cfg = AH7_3430_GPIO27 },
+		.suspend = { .nb = 27 },
 		.enable_usb_ohci = UNUSED_GPIO,
 	},
 	.rev[2] = {
-		.suspend = { .nb = 27, .mux_cfg = AH7_3430_GPIO27 },
+		.suspend = { .nb = 27 },
 		.enable_usb_ohci = UNUSED_GPIO,
 	},
 	.rev[3] = {
-		.suspend = { .nb = 27, .mux_cfg = AH7_3430_GPIO27 },
+		.suspend = { .nb = 27 },
 		.enable_usb_ohci = UNUSED_GPIO,
 	},
 	.rev[4] = {
-		.suspend = { .nb = 27, .mux_cfg = AH7_3430_GPIO27 },
+		.suspend = { .nb = 27 },
 		.enable_usb_ohci = UNUSED_GPIO,
 	},
 	.rev[5] = {
-		.suspend = { .nb = 27, .mux_cfg = AH7_3430_GPIO27 },
+		.suspend = { .nb = 27 },
 		.enable_usb_ohci = UNUSED_GPIO,
 	},
 	.rev[6] = {
-		.suspend = { .nb = 27, .mux_cfg = AH7_3430_GPIO27 },
+		.suspend = { .nb = 27 },
 		.enable_usb_ohci = UNUSED_GPIO,
 	},
 };
@@ -669,33 +669,33 @@ static struct archos_usb_tsp_config usb_tsp_config __initdata = {
 		.reset = UNUSED_GPIO,
 	},
 	.rev[1] = {
-		.enable = { .nb = 26, .mux_cfg = AG7_3430_GPIO26 },
-		.reset = { .nb = 25, .mux_cfg = AF7_3430_GPIO25_OUT },
+		.enable = { .nb = 26 },
+		.reset = { .nb = 25 },
 		.suspend_flags = USB_TSP_FLAGS_EARLY_POWER_OFF | USB_TSP_FLAGS_RELEASE_WA,
 	},
 	.rev[2] = {
-		.enable = { .nb = 26, .mux_cfg = AG7_3430_GPIO26 },
-		.reset = { .nb = 25, .mux_cfg = AF7_3430_GPIO25_OUT },
+		.enable = { .nb = 26 },
+		.reset = { .nb = 25 },
 		.suspend_flags = USB_TSP_FLAGS_EARLY_POWER_OFF | USB_TSP_FLAGS_RELEASE_WA,
 	},
 	.rev[3] = {
-		.enable = { .nb = 26, .mux_cfg = AG7_3430_GPIO26 },
-		.reset = { .nb = 25, .mux_cfg = AF7_3430_GPIO25_OUT },
+		.enable = { .nb = 26 },
+		.reset = { .nb = 25 },
 		.suspend_flags = USB_TSP_FLAGS_EARLY_POWER_OFF,
 	},
 	.rev[4] = {
-		.enable = { .nb = 26, .mux_cfg = AG7_3430_GPIO26 },
-		.reset = { .nb = 25, .mux_cfg = AF7_3430_GPIO25_OUT },
+		.enable = { .nb = 26 },
+		.reset = { .nb = 25 },
 		.suspend_flags = USB_TSP_FLAGS_EARLY_POWER_OFF,
 	},
 	.rev[5] = {
-		.enable = { .nb = 26, .mux_cfg = AG7_3430_GPIO26 },
-		.reset = { .nb = 25, .mux_cfg = AF7_3430_GPIO25_OUT },
+		.enable = { .nb = 26 },
+		.reset = { .nb = 25 },
 		.suspend_flags = USB_TSP_FLAGS_EARLY_POWER_OFF,
 	},
 	.rev[6] = {
-		.enable = { .nb = 26, .mux_cfg = AG7_3430_GPIO26 },
-		.reset = { .nb = 25, .mux_cfg = AF7_3430_GPIO25_OUT },
+		.enable = { .nb = 26 },
+		.reset = { .nb = 25 },
 		.suspend_flags = USB_TSP_FLAGS_EARLY_POWER_OFF,
 	},
 };
