@@ -39,7 +39,7 @@ static int set_vbus(struct device *dev, int is_on)
 static struct omap_musb_board_data musb_board_data = {
         .interface_type         = MUSB_INTERFACE_ULPI,
         .mode                   = MUSB_OTG,
-	.power			= 50,			/* up to 100 mA */
+	.power			= 100,			/* up to 100 mA */
 };
 
 void __init archos_usb_musb_init(void)
